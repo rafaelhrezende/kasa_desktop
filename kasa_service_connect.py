@@ -75,3 +75,45 @@ class KasaService:
       return ServiceResult(True, "Bill Updated", result)
     else:
       return ServiceResult(False, result.text, result)
+
+  def load_invoices(bill_id):
+    result = requests.get(f'{KASA_SERVICE_URL}/bills/{bill_id}/invoices', headers={"Authorization": f"Bearer {this.current_token}"})
+
+    if result:
+      return ServiceResult(True, None, result)
+    else:
+      return ServiceResult(False, result.text, result)
+
+  def createInvoice(bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, status):
+    result = requests.post(f'{KASA_SERVICE_URL}/bills/{bill_id}/invoices/', headers={"Authorization": f"Bearer {this.current_token}"}, json={
+      "method": method,
+      "reference_year": refYear,
+      "reference_month": refMonth,
+      "value": value,
+      "due_date": dueDate,
+      "completion_date": completionDate,
+      "pay_day": payDay,
+      "status": status
+      } )
+
+    if result:
+      return ServiceResult(True, "Invoice Created", result)
+    else:
+      return ServiceResult(False, result.text, result)
+
+  def updateInvoice(bill_id, invoice_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, status):
+    result = requests.put(f'{KASA_SERVICE_URL}/bills/{bill_id}/invoices/{invoice_id}/', headers={"Authorization": f"Bearer {this.current_token}"}, json={
+      "method": method,
+      "reference_year": refYear,
+      "reference_month": refMonth,
+      "value": value,
+      "due_date": dueDate,
+      "completion_date": completionDate,
+      "pay_day": payDay,
+      "status": status
+      } )
+
+    if result:
+      return ServiceResult(True, "Invoice Updated", result)
+    else:
+      return ServiceResult(False, result.text, result)

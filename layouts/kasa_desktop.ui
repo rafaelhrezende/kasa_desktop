@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1687</width>
-    <height>803</height>
+    <width>1890</width>
+    <height>950</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <widget class="QLabel" name="username_label">
     <property name="geometry">
      <rect>
-      <x>1520</x>
+      <x>1710</x>
       <y>10</y>
       <width>161</width>
       <height>18</height>
@@ -30,13 +30,73 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
+   <widget class="QTableWidget" name="invoices_table">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>60</y>
+      <width>1061</width>
+      <height>821</height>
+     </rect>
+    </property>
+    <column>
+     <property name="text">
+      <string>Id.</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Ref. Year</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Ref. Month</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Bill</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Value</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>method</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>due_date</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>completion_date</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>pay_day</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>status</string>
+     </property>
+    </column>
+   </widget>
    <widget class="QTableWidget" name="bills_table">
     <property name="geometry">
      <rect>
-      <x>19</x>
-      <y>36</y>
-      <width>1021</width>
-      <height>711</height>
+      <x>20</x>
+      <y>60</y>
+      <width>781</width>
+      <height>821</height>
      </rect>
     </property>
     <property name="columnCount">
@@ -79,7 +139,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1687</width>
+     <width>1890</width>
      <height>30</height>
     </rect>
    </property>
@@ -97,8 +157,16 @@
     <addaction name="actionLoad_Bills"/>
     <addaction name="actionNew_Bill"/>
    </widget>
+   <widget class="QMenu" name="menuInvoices">
+    <property name="title">
+     <string>Invoices</string>
+    </property>
+    <addaction name="actionLoad_Invoices"/>
+    <addaction name="actionNew_invoice"/>
+   </widget>
    <addaction name="menuStart"/>
    <addaction name="menuBills"/>
+   <addaction name="menuInvoices"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLogin">
@@ -131,6 +199,16 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionLoad_Invoices">
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </action>
+  <action name="actionNew_invoice">
    <property name="text">
     <string>New</string>
    </property>

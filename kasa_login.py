@@ -19,7 +19,7 @@ class Login:
         self.parent.actionNew_Bill.setEnabled(False)
 
     def openLoginDialog(self):
-        self.loginWidget = self.loader.load("kasa_login.ui", self.parent)
+        self.loginWidget = self.loader.load("layouts/login.ui", self.parent)
         self.loginWidget.loginButton.clicked.connect(self.authenticate)
         self.loginWidget.messageLabel.setText('')
         self.loginWidget.show()
