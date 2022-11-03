@@ -10,6 +10,9 @@ class Invoice:
     self.parent = parent
     #self.clear()
 
+  def get_text_if_present(self, qObject):
+    return qObject.text() if qObject.text() != "" else None
+
   def getSelectedDate(self):
     return self.Widget.calendarWidget.selectedDate().toString("yyyy-MM-dd")
 
@@ -57,13 +60,13 @@ class Invoice:
   def save(self):
     print("save button pressed")
 
-    refYear = self.Widget.refYearLineEdit.text()
-    refMonth = self.Widget.refMonthLineEdit.text()
-    value = self.Widget.valueLineEdit.text()
-    dueDate = self.Widget.dueDateLineEdit.text()
-    completionDate = self.Widget.completionDateLineEdit.text()
-    payDay = self.Widget.payDayLineEdit.text()
-    status = self.Widget.statusLineEdit.text()
+    refYear = self.get_text_if_present(self.Widget.refYearLineEdit)
+    refMonth = self.get_text_if_present(self.Widget.refMonthLineEdit)
+    value = self.get_text_if_present(self.Widget.valueLineEdit)
+    dueDate = self.get_text_if_present(self.Widget.dueDateLineEdit)
+    completionDate = self.get_text_if_present(self.Widget.completionDateLineEdit)
+    payDay = self.get_text_if_present(self.Widget.payDayLineEdit)
+    status = self.get_text_if_present(self.Widget.statusLineEdit)
     method = self.Widget.methodComboBox.currentText()
 
     if self.invoice_id != None:  
