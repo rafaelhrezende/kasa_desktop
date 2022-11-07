@@ -1,8 +1,9 @@
 import sys
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtUiTools import QUiLoader
-from kasa_service_connect import KasaService, print_token
-import pdb # pdb.set_trace()
+from kasa_service_connect import KasaInvoiceService, print_token
+import kasa_lib
+#import pdb # pdb.set_trace()
 
 class Invoice:
   def __init__(self, parent):
@@ -28,6 +29,29 @@ class Invoice:
   def setPayDayPushButton_clicked(self):
     self.setDateLineEditValue(self.Widget.payDayLineEdit)
 
+  def load(self, bill_id, invoice_id):
+    if bill_id == False or bill_id == None or bill_id == "":
+      return
+    if invoice_id == False or invoice_id == None or invoice_id == "":
+      return
+
+    invoice_result = KasaInvoiceService.load_invoice(bill_id, invoice_id)
+    if invoice_result:
+      self.invoice_id = invoice_id
+      kasa_lib.set_field_to_text(self.Widget.refYearLineEdit, invoice_result.json(), 'reference_year')
+      kasa_lib.set_field_to_text(self.Widget.refMonthLineEdit, invoice_result.json(), 'reference_month')
+      kasa_lib.set_field_to_text(self.Widget.valueLineEdit, invoice_result.json(), 'value')
+      kasa_lib.set_field_to_text(self.Widget.dueDateLineEdit, invoice_result.json(), 'due_date')
+      kasa_lib.set_field_to_text(self.Widget.completionDateLineEdit, invoice_result.json(), 'completion_date')
+      kasa_lib.set_field_to_text(self.Widget.payDayLineEdit, invoice_result.json(), 'pay_day')
+      kasa_lib.set_field_to_text(self.Widget.statusLineEdit, invoice_result.json(), 'status')
+      method_index = self.Widget.methodComboBox.findText(str(invoice_result.json()['method']))
+      
+      if method_index >= 0:
+        self.Widget.methodComboBox.setCurrentIndex(method_index)
+
+    self.Widget.messageLabel.setText(invoice_result.message)
+
   def initiateWidget(self):
     self.Widget = self.loader.load("layouts/invoice.ui", self.parent)
     self.Widget.savePushButton.clicked.connect(self.save)
@@ -36,24 +60,12 @@ class Invoice:
     self.Widget.setCompletionDatePushButton.clicked.connect(self.setCompletionDatePushButton_clicked)
     self.Widget.setPayDayPushButton.clicked.connect(self.setPayDayPushButton_clicked)
 
-  def openDialog(self, bill_id, invoice_id = None, refYear = None, refMonth = None, bill = None,
-                  value = None, method = None, dueDate = None, completionDate = None, payDay = None, status = None):
+  def openDialog(self, bill_id, invoice_id = None, bill = None):
     self.initiateWidget()
     self.bill_id = bill_id
-    self.invoice_id = invoice_id
-
-    self.Widget.refYearLineEdit.insert(refYear)
-    self.Widget.refMonthLineEdit.insert(refMonth)
+    self.invoice_id = None
     self.Widget.billLineEdit.insert(bill)
-    self.Widget.valueLineEdit.insert(value)
-    self.Widget.dueDateLineEdit.insert(dueDate)
-    self.Widget.completionDateLineEdit.insert(completionDate)
-    self.Widget.payDayLineEdit.insert(payDay)
-    self.Widget.statusLineEdit.insert(status)
-
-    method_index = self.Widget.methodComboBox.findText(method)
-    if method_index >= 0:
-      self.Widget.methodComboBox.setCurrentIndex(method_index)
+    self.load(bill_id, invoice_id)
     
     self.Widget.show()
 
@@ -70,8 +82,8 @@ class Invoice:
     method = self.Widget.methodComboBox.currentText()
 
     if self.invoice_id != None:  
-      result = KasaService.updateInvoice(self.bill_id, self.invoice_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, status)
+      result = KasaInvoiceService.updateInvoice(self.bill_id, self.invoice_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, status)
     else:
-      result = KasaService.createInvoice(self.bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, status)
+      result = KasaInvoiceService.createInvoice(self.bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, status)
 
     self.Widget.messageLabel.setText(result.message)

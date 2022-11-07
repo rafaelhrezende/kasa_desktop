@@ -51,12 +51,7 @@ def load_bills():
 
 def tableBillWidget_cellDoubleClicked(row, column):
   bill_id = window.bills_table.item(row, 0).text()
-  bill_title = window.bills_table.item(row, 1).text()
-  bill_description = window.bills_table.item(row, 2).text()
-  bill_category = window.bills_table.item(row, 3).text()
-  bill_initial_value = window.bills_table.item(row, 4).text()
-  bill_payment_day = window.bills_table.item(row, 5).text()
-  bill.openDialog(bill_id, bill_title, bill_description, bill_category, bill_initial_value, bill_payment_day)
+  bill.openDialog(bill_id)
 
 def load_invoices():
   clearTable(window.invoices_table)
@@ -76,20 +71,8 @@ def load_invoices():
 
 def tableInvoiceWidget_cellDoubleClicked(row, column):
   invoice_id = window.invoices_table.item(row, 0).text()
-  
-  invoice_id = window.invoices_table.item(row, 0).text()  
-  invoice_reference_year = window.invoices_table.item(row, 1).text()  
-  invoice_reference_month = window.invoices_table.item(row, 2).text()  
   bill_title = window.invoices_table.item(row, 3).text()  
-  invoice_value = window.invoices_table.item(row, 4).text()  
-  invoice_method = window.invoices_table.item(row, 5).text()  
-  invoice_due_date = window.invoices_table.item(row, 6).text()  
-  invoice_completion_date = window.invoices_table.item(row, 7).text()  
-  invoice_pay_day = window.invoices_table.item(row, 8).text()  
-  invoice_status = window.invoices_table.item(row, 9).text()  
-
-  invoice.openDialog(get_current_bill_field(0), invoice_id,invoice_reference_year, invoice_reference_month, bill_title, invoice_value,
-                        invoice_method, invoice_due_date, invoice_completion_date, invoice_pay_day, invoice_status)
+  invoice.openDialog(get_current_bill_field(0), invoice_id, bill_title)
 
 def get_current_bill_field(index):
   return window.bills_table.item(window.bills_table.currentRow(), index).text()
