@@ -5,12 +5,12 @@ from PySide2.QtUiTools import QUiLoader
 import kasa_login
 import kasa_bill
 import kasa_invoice
+from  kasa_lib import *
 
 from kasa_service_connect import KasaService
 
 def addJsonFieldToTable(tableWidget, json, field, row_index, columnIndex):
-  field_data = str(json[field])
-  tableWidget.setItem(row_index, columnIndex,QtWidgets.QTableWidgetItem(field_data))
+  tableWidget.setItem(row_index, columnIndex,QtWidgets.QTableWidgetItem(get_json_field_value(json, field)))
 
 def add_bill_table(tableWidget, bill, row_index):
   addJsonFieldToTable(tableWidget, bill,  'id', row_index, 0)

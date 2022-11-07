@@ -3,7 +3,6 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtUiTools import QUiLoader
 from kasa_service_connect import KasaInvoiceService, print_token
 import kasa_lib
-#import pdb # pdb.set_trace()
 
 class Invoice:
   def __init__(self, parent):
