@@ -24,7 +24,6 @@ def get_json_field_value(json, field_name):
     return str(json[field_name])
 
 def clearTable(tableWidget):
-  print (f'clearTable: Row Count: {tableWidget.rowCount()}')
   while tableWidget.rowCount() > 0:
     tableWidget.removeRow(0)
 

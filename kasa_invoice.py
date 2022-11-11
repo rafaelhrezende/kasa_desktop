@@ -4,7 +4,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtUiTools import QUiLoader
 from kasa_service_connect import KasaInvoiceService, print_token
 from kasa_lib import *
-import pdb # 
+import pyqtgraph as pg
 
 def fill_invoice_table(invoiceTable, invoicesJson):
   for invoice in invoicesJson:
@@ -131,19 +131,23 @@ class InvoiceManagement(BaseWindows):
     self.Widget.totalOpen_lineEdit.setText(str(totalOpen))
     self.Widget.totalToPay_lineEdit.setText(str(totalToPay))
 
+    return [total, totalPaid, totalToPay]
+
   def clear(self):
     clearTable(self.invoicesTable())
     self.Widget.total_lineEdit.setText('')
     self.Widget.totalPaid_lineEdit.setText('')
     self.Widget.totalScheduled_lineEdit.setText('')
     self.Widget.totalOpen_lineEdit.setText('')
-
+    self.graphWidget.clear()
 
   def load(self):
     result = KasaInvoiceService.load_invoices_by_ref(self.referenceYear(), self.referenceMonth())
     self.clear()
     fill_invoice_table(self.invoicesTable(), result.json())
-    self.compute_invoice(result.json())
+    computedValues = self.compute_invoice(result.json())
+
+    self.loadChart(*computedValues)
     self.logMessage(result.message)
 
   def openDialog(self):
@@ -151,5 +155,22 @@ class InvoiceManagement(BaseWindows):
     self.Widget.referenceYear_spinBox.setValue(date.today().year)
     self.Widget.referenceMonth_spinBox.setValue(date.today().month)
     self.Widget.filter_pushButton.clicked.connect(self.load)
+    self.graphWidget = pg.PlotWidget()  
+    self.Widget.chartArea_verticalLayout.addWidget(self.graphWidget)
+
     self.load()
     self.show()
+
+
+  def loadChart(self, total, totalPaid, totalToPay):
+    self.graphWidget.addItem(self.createBar([1],[total],'r'))
+    self.graphWidget.addItem(self.createBar([2],[totalPaid],'g'))
+    self.graphWidget.addItem(self.createBar([3],[totalToPay],'b'))
+
+    labels=[(1, 'A'), (2, 'B'), (3, 'C')]
+    self.graphWidget.plot(labels=labels)
+    ax =self.graphWidget.getAxis('bottom')
+    ax.setTicks([labels])
+
+  def createBar(self, x,y,brush):
+    return pg.BarGraphItem(x = x, height = y, width = 0.6, brush = brush)
