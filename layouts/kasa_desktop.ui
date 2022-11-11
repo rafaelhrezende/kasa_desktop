@@ -163,6 +163,7 @@
     </property>
     <addaction name="actionLoad_Invoices"/>
     <addaction name="actionNew_invoice"/>
+    <addaction name="actionManagement_Invoice"/>
    </widget>
    <addaction name="menuStart"/>
    <addaction name="menuBills"/>
@@ -211,6 +212,11 @@
   <action name="actionNew_invoice">
    <property name="text">
     <string>New</string>
+   </property>
+  </action>
+  <action name="actionManagement_Invoice">
+   <property name="text">
+    <string>Management</string>
    </property>
   </action>
  </widget>

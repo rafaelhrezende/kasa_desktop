@@ -1,14 +1,33 @@
 import sys
+from datetime import date
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtUiTools import QUiLoader
 from kasa_service_connect import KasaInvoiceService, print_token
-import kasa_lib
+from kasa_lib import *
+import pdb # 
+
+def fill_invoice_table(invoiceTable, invoicesJson):
+  for invoice in invoicesJson:
+    row_index = invoiceTable.rowCount()
+    row = invoiceTable.insertRow(row_index)
+    add_invoice_to_table(invoiceTable, invoice['bill']['title'], invoice, row_index)
+
+def add_invoice_to_table(tableWidget, bill_title, invoice, row_index):
+  addJsonFieldToTable(tableWidget, invoice,  'id', row_index, 0)
+  addJsonFieldToTable(tableWidget, invoice,  'reference_year', row_index, 1)
+  addJsonFieldToTable(tableWidget, invoice,  'reference_month', row_index, 2)
+  tableWidget.setItem(row_index, 3,QtWidgets.QTableWidgetItem(bill_title))
+  addJsonFieldToTable(tableWidget, invoice,  'value', row_index, 4)
+  addJsonFieldToTable(tableWidget, invoice,  'method', row_index, 5)
+  addJsonFieldToTable(tableWidget, invoice,  'due_date', row_index, 6)
+  addJsonFieldToTable(tableWidget, invoice,  'completion_date', row_index, 7)
+  addJsonFieldToTable(tableWidget, invoice,  'pay_day', row_index, 8)
+  addJsonFieldToTable(tableWidget, invoice,  'status', row_index, 9)
 
 class Invoice:
   def __init__(self, parent):
     self.loader = QUiLoader()
     self.parent = parent
-    #self.clear()
 
   def get_text_if_present(self, qObject):
     return qObject.text() if qObject.text() != "" else None
@@ -37,13 +56,13 @@ class Invoice:
     invoice_result = KasaInvoiceService.load_invoice(bill_id, invoice_id)
     if invoice_result:
       self.invoice_id = invoice_id
-      kasa_lib.set_field_to_text(self.Widget.refYearLineEdit, invoice_result.json(), 'reference_year')
-      kasa_lib.set_field_to_text(self.Widget.refMonthLineEdit, invoice_result.json(), 'reference_month')
-      kasa_lib.set_field_to_text(self.Widget.valueLineEdit, invoice_result.json(), 'value')
-      kasa_lib.set_field_to_text(self.Widget.dueDateLineEdit, invoice_result.json(), 'due_date')
-      kasa_lib.set_field_to_text(self.Widget.completionDateLineEdit, invoice_result.json(), 'completion_date')
-      kasa_lib.set_field_to_text(self.Widget.payDayLineEdit, invoice_result.json(), 'pay_day')
-      kasa_lib.set_field_to_text(self.Widget.statusLineEdit, invoice_result.json(), 'status')
+      set_field_to_text(self.Widget.refYearLineEdit, invoice_result.json(), 'reference_year')
+      set_field_to_text(self.Widget.refMonthLineEdit, invoice_result.json(), 'reference_month')
+      set_field_to_text(self.Widget.valueLineEdit, invoice_result.json(), 'value')
+      set_field_to_text(self.Widget.dueDateLineEdit, invoice_result.json(), 'due_date')
+      set_field_to_text(self.Widget.completionDateLineEdit, invoice_result.json(), 'completion_date')
+      set_field_to_text(self.Widget.payDayLineEdit, invoice_result.json(), 'pay_day')
+      set_field_to_text(self.Widget.statusLineEdit, invoice_result.json(), 'status')
       method_index = self.Widget.methodComboBox.findText(str(invoice_result.json()['method']))
       
       if method_index >= 0:
@@ -69,8 +88,6 @@ class Invoice:
     self.Widget.show()
 
   def save(self):
-    print("save button pressed")
-
     refYear = self.get_text_if_present(self.Widget.refYearLineEdit)
     refMonth = self.get_text_if_present(self.Widget.refMonthLineEdit)
     value = self.get_text_if_present(self.Widget.valueLineEdit)
@@ -86,3 +103,53 @@ class Invoice:
       result = KasaInvoiceService.createInvoice(self.bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, status)
 
     self.Widget.messageLabel.setText(result.message)
+
+class InvoiceManagement(BaseWindows):
+  def __init__(self, parent):
+    BaseWindows.__init__(self, parent)
+
+  def referenceYear(self):
+    return self.Widget.referenceYear_spinBox.text()
+
+  def referenceMonth(self):
+    return self.Widget.referenceMonth_spinBox.text()
+
+  def invoicesTable(self):
+    return self.Widget.invoices_table
+
+  def compute_invoice(self, invoicesJson):
+    total = sum(invoice['value'] for invoice in invoicesJson)
+    totalPaid = sum(invoice['value'] for invoice in invoicesJson if invoice['status'] == 1)
+    totalScheduled = sum(invoice['value'] for invoice in invoicesJson if invoice['status'] == 2)
+    totalOpen = sum(invoice['value'] for invoice in invoicesJson if invoice['status'] == 0)
+
+    totalToPay = totalScheduled + totalOpen
+    
+    self.Widget.total_lineEdit.setText(str(total))
+    self.Widget.totalPaid_lineEdit.setText(str(totalPaid))
+    self.Widget.totalScheduled_lineEdit.setText(str(totalScheduled))
+    self.Widget.totalOpen_lineEdit.setText(str(totalOpen))
+    self.Widget.totalToPay_lineEdit.setText(str(totalToPay))
+
+  def clear(self):
+    clearTable(self.invoicesTable())
+    self.Widget.total_lineEdit.setText('')
+    self.Widget.totalPaid_lineEdit.setText('')
+    self.Widget.totalScheduled_lineEdit.setText('')
+    self.Widget.totalOpen_lineEdit.setText('')
+
+
+  def load(self):
+    result = KasaInvoiceService.load_invoices_by_ref(self.referenceYear(), self.referenceMonth())
+    self.clear()
+    fill_invoice_table(self.invoicesTable(), result.json())
+    self.compute_invoice(result.json())
+    self.logMessage(result.message)
+
+  def openDialog(self):
+    self.initiateWidget('layouts/invoice_management.ui')
+    self.Widget.referenceYear_spinBox.setValue(date.today().year)
+    self.Widget.referenceMonth_spinBox.setValue(date.today().month)
+    self.Widget.filter_pushButton.clicked.connect(self.load)
+    self.load()
+    self.show()

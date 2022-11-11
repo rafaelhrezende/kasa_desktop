@@ -5,12 +5,9 @@ from PySide2.QtUiTools import QUiLoader
 import kasa_login
 import kasa_bill
 import kasa_invoice
-from  kasa_lib import *
+from kasa_lib import *
 
 from kasa_service_connect import KasaService
-
-def addJsonFieldToTable(tableWidget, json, field, row_index, columnIndex):
-  tableWidget.setItem(row_index, columnIndex,QtWidgets.QTableWidgetItem(get_json_field_value(json, field)))
 
 def add_bill_table(tableWidget, bill, row_index):
   addJsonFieldToTable(tableWidget, bill,  'id', row_index, 0)
@@ -20,6 +17,7 @@ def add_bill_table(tableWidget, bill, row_index):
   addJsonFieldToTable(tableWidget, bill,  "initial_value", row_index, 4)
   addJsonFieldToTable(tableWidget, bill,  "payment_day", row_index, 5)
 
+# Remover
 def add_invoice_table(tableWidget, bill_title, invoice, row_index):
   addJsonFieldToTable(tableWidget, invoice,  'id', row_index, 0)
   addJsonFieldToTable(tableWidget, invoice,  'reference_year', row_index, 1)
@@ -31,11 +29,6 @@ def add_invoice_table(tableWidget, bill_title, invoice, row_index):
   addJsonFieldToTable(tableWidget, invoice,  'completion_date', row_index, 7)
   addJsonFieldToTable(tableWidget, invoice,  'pay_day', row_index, 8)
   addJsonFieldToTable(tableWidget, invoice,  'status', row_index, 9)
-
-def clearTable(tableWidget):
-  print (f'clearTable: Row Count: {tableWidget.rowCount()}')
-  while tableWidget.rowCount() > 0:
-    tableWidget.removeRow(0)
 
 def load_bills():
   clearTable(window.bills_table)
@@ -83,7 +76,7 @@ def new_invoice_action():
     print ('Bill not selected')
     return
 
-  invoice.openDialog(current_bill_id, bill = get_current_bill_field(1), value = get_current_bill_field(4))
+  invoice.openDialog(current_bill_id, bill = get_current_bill_field(1))
 
 loader = QUiLoader()
 app = QtWidgets.QApplication(sys.argv)
@@ -92,6 +85,7 @@ window = loader.load("layouts/kasa_desktop.ui", None)
 login =  kasa_login.Login(window)
 bill = kasa_bill.Bill(window)
 invoice = kasa_invoice.Invoice(window)
+invoice_management = kasa_invoice.InvoiceManagement(window)
 
 window.actionLogin.triggered.connect(login.openLoginDialog)
 window.actionNew_User.triggered.connect(login.openUserDialog)
@@ -103,6 +97,7 @@ window.bills_table.cellClicked.connect(load_invoices)
 
 window.actionLoad_Invoices.triggered.connect(load_invoices)
 window.actionNew_invoice.triggered.connect(new_invoice_action)
+window.actionManagement_Invoice.triggered.connect(invoice_management.openDialog)
 window.invoices_table.cellDoubleClicked.connect(tableInvoiceWidget_cellDoubleClicked)
 
 window.show()

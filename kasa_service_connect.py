@@ -122,3 +122,7 @@ class KasaInvoiceService:
       "status": status
       } )
     return transform_result(result, "Invoice Updated")
+
+  def load_invoices_by_ref(refYear, refMonth):
+    result = requests.get(f'{KASA_SERVICE_URL}/invoices/?reference_year={refYear}&reference_month={refMonth}', headers=this.headers())
+    return transform_result(result, "invoice search completed")
