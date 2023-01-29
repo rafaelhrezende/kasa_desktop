@@ -14,6 +14,12 @@ class Bill:
     self.billWidget = self.loader.load("kasa_bill.ui", self.parent)
     self.billWidget.savePushButton.clicked.connect(self.save)
 
+  def getIsActiveProp(self):
+    return self.billWidget.is_active_checkBox.isChecked()
+
+  def setIsActiveProp(self, state: bool):
+    self.billWidget.is_active_checkBox.setChecked(state)    
+
   def load(self, bill_id):
     if bill_id == False or bill_id == None or bill_id == "":
       return
@@ -27,7 +33,8 @@ class Bill:
       kasa_lib.set_field_to_text(self.billWidget.categoryLineEdit, bill_result.json(), 'category')
       kasa_lib.set_field_to_text(self.billWidget.initial_valueLineEdit, bill_result.json(), 'initial_value')
       kasa_lib.set_field_to_text(self.billWidget.payment_dayLineEdit, bill_result.json(), 'payment_day')
-    
+      self.setIsActiveProp(kasa_lib.get_json_field_value(bill_result.json(), 'is_active', kasa_lib.FieldType.BOOLEAN))
+
     self.billWidget.messageLabel.setText(bill_result.message)
 
   def openDialog(self, bill_id=None):
@@ -37,7 +44,6 @@ class Bill:
     self.billWidget.show()
 
   def save(self):
-    print("save button pressed")
     title = self.billWidget.titleLineEdit.text()
     description = self.billWidget.descriptionLineEdit.text()
     category = self.billWidget.categoryLineEdit.text()
@@ -45,8 +51,10 @@ class Bill:
     initial_value = self.billWidget.initial_valueLineEdit.text()
 
     if self.bill_id != None:  
-      result = KasaBillService.updateBill(self.bill_id, title, description, category, payment_day, initial_value)
+      result = KasaBillService.updateBill(self.bill_id, title, description, category, payment_day, initial_value, self.getIsActiveProp())
     else:
-      result = KasaBillService.createBill(title, description, category, payment_day, initial_value)
+      result = KasaBillService.createBill(title, description, category, payment_day, initial_value, self.getIsActiveProp())
 
     self.billWidget.messageLabel.setText(result.message)
+
+

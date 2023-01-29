@@ -55,7 +55,6 @@ def load_invoices():
   if result.success:
     invoices = result.json()
     for invoice in invoices:
-      print(invoice)
       row_index = window.invoices_table.rowCount()
       row = window.invoices_table.insertRow(row_index)
       add_invoice_table(window.invoices_table,billTitle, invoice, row_index)

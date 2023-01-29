@@ -1,6 +1,11 @@
 import sys
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtUiTools import QUiLoader
+from enum import Enum
+
+class FieldType(Enum):
+  STRING = 1
+  BOOLEAN = 2
 
 class BaseWindows:
   def __init__(self, parent):
@@ -19,9 +24,14 @@ class BaseWindows:
 def set_field_to_text(qt_item, json, field_name):
   qt_item.insert(get_json_field_value(json, field_name))
 
-def get_json_field_value(json, field_name):
+def get_json_field_value(json, field_name, field_type: FieldType = FieldType.STRING):
+
   if field_name in json.keys() and json[field_name] != None:
-    return str(json[field_name])
+    if field_type == FieldType.STRING:
+      return str(json[field_name])
+
+    if field_type == FieldType.BOOLEAN:
+      return json[field_name]
 
 def clearTable(tableWidget):
   while tableWidget.rowCount() > 0:

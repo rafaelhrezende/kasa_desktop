@@ -65,30 +65,30 @@ class KasaService:
     else:
       return ServiceResult(False, result.text, result)
 
-  
-
 class KasaBillService:
   def load_bill(bill_id):
      result = requests.get(f'{KASA_SERVICE_URL}/bills/{bill_id}', headers=this.headers())
      return transform_result(result, f"Loaded {bill_id}")
 
-  def createBill( title, description, category, payment_day, initial_value):
+  def createBill(title, description, category, payment_day, initial_value, is_active):
     result = requests.post(f'{KASA_SERVICE_URL}/bills', headers=this.headers(), json={
       "title": title,
       "description": description,
       "category": category,
       "payment_day": payment_day,
-      "initial_value": initial_value
+      "initial_value": initial_value,
+      "is_active": is_active
       } )
     return transform_result(result, "Bill Created")
 
-  def updateBill(id, title, description, category, payment_day, initial_value):
+  def updateBill(id, title, description, category, payment_day, initial_value, is_active):
     result = requests.put(f'{KASA_SERVICE_URL}/bills/{id}', headers=this.headers(), json={
       "title": title,
       "description": description,
       "category": category,
       "payment_day": payment_day,
-      "initial_value": initial_value
+      "initial_value": initial_value,
+      "is_active": is_active
       } )
     return transform_result(result, "Bill Updated")
 
