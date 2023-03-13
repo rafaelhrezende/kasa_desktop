@@ -119,8 +119,15 @@ class InvoiceManagement(BaseWindows):
 
   def compute_invoice(self, invoicesJson):
     total = sum(invoice['value'] for invoice in invoicesJson)
-    totalPaid = sum(invoice['value'] for invoice in invoicesJson if invoice['status'] == 1)
+
     totalScheduled = sum(invoice['value'] for invoice in invoicesJson if invoice['status'] == 2)
+
+    totalScheduledPaid = sum(invoice['value'] for invoice in invoicesJson if invoice['status'] == 2 and date.fromisoformat(invoice['pay_day']) < date.today())
+
+    totalPaid = sum(invoice['value'] for invoice in invoicesJson if invoice['status'] == 1) + totalScheduledPaid
+    
+    totalScheduled = totalScheduled - totalScheduledPaid
+
     totalOpen = sum(invoice['value'] for invoice in invoicesJson if invoice['status'] == 0)
 
     totalToPay = totalScheduled + totalOpen
