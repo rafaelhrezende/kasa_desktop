@@ -3,6 +3,10 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtUiTools import QUiLoader
 from enum import Enum
 
+loader = QUiLoader()
+app = QtWidgets.QApplication(sys.argv)
+window = loader.load("layouts/kasa_desktop.ui", None)
+
 class FieldType(Enum):
   STRING = 1
   BOOLEAN = 2

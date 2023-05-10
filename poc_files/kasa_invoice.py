@@ -6,6 +6,9 @@ from kasa_service_connect import KasaInvoiceService, print_token
 from kasa_lib import *
 import pyqtgraph as pg
 
+# import pdb 
+# #pdb.set_trace() 
+
 def fill_invoice_table(invoiceTable, invoicesJson):
   for invoice in invoicesJson:
     row_index = invoiceTable.rowCount()
@@ -26,7 +29,7 @@ def add_invoice_to_table(tableWidget, bill_title, invoice, row_index):
 
 class Invoice:
   def __init__(self, parent):
-    self.loader = QUiLoader()
+    #self.loader = QUiLoader()
     self.parent = parent
 
   def get_text_if_present(self, qObject):
@@ -71,12 +74,14 @@ class Invoice:
     self.Widget.messageLabel.setText(invoice_result.message)
 
   def initiateWidget(self):
-    self.Widget = self.loader.load("layouts/invoice.ui", self.parent)
+    print(self.parent.__class__)
+    self.Widget = loader.load("layouts/invoice.ui", window)
     self.Widget.savePushButton.clicked.connect(self.save)
 
     self.Widget.setDueDatePushButton.clicked.connect(self.setDueDatePushButton_clicked)
     self.Widget.setCompletionDatePushButton.clicked.connect(self.setCompletionDatePushButton_clicked)
     self.Widget.setPayDayPushButton.clicked.connect(self.setPayDayPushButton_clicked)
+    print('initialWidget-Finish')
 
   def openDialog(self, bill_id, invoice_id = None, bill = None):
     self.initiateWidget()
@@ -86,8 +91,10 @@ class Invoice:
     self.load(bill_id, invoice_id)
     
     self.Widget.show()
+    print('Invoice Open')
 
   def save(self):
+    print('Invoice Save')
     refYear = self.get_text_if_present(self.Widget.refYearLineEdit)
     refMonth = self.get_text_if_present(self.Widget.refMonthLineEdit)
     value = self.get_text_if_present(self.Widget.valueLineEdit)
@@ -117,6 +124,27 @@ class InvoiceManagement(BaseWindows):
   def invoicesTable(self):
     return self.Widget.invoices_table
 
+  
+  def tableInvoiceWidget_cellDoubleClicked(self, row, column):
+    invoice_id = self.Widget.invoices_table.item(row, 0).text()
+    
+    def in_function(item):
+        result = item['id'] == int(invoice_id)
+        return result
+    
+    item = list(filter(in_function,  self.result.json()))[0]
+    
+    bill_id = item['bill']['id']
+    
+    bill_title = self.Widget.invoices_table.item(row, 3).text()
+    
+    invoice = Invoice(window)
+    
+    invoice.openDialog(bill_id, invoice_id, bill_title)
+
+  def validate(self, item, id):
+      return item['id'] == id
+      
   def compute_invoice(self, invoicesJson):
     total = sum(invoice['value'] for invoice in invoicesJson)
 
@@ -149,25 +177,27 @@ class InvoiceManagement(BaseWindows):
     self.graphWidget.clear()
 
   def load(self):
-    result = KasaInvoiceService.load_invoices_by_ref(self.referenceYear(), self.referenceMonth())
+    self.result = KasaInvoiceService.load_invoices_by_ref(self.referenceYear(), self.referenceMonth())
     self.clear()
-    fill_invoice_table(self.invoicesTable(), result.json())
-    computedValues = self.compute_invoice(result.json())
+    fill_invoice_table(self.invoicesTable(), self.result.json())
+    computedValues = self.compute_invoice(self.result.json())
 
     self.loadChart(*computedValues)
-    self.logMessage(result.message)
+    self.logMessage(self.result.message)
 
   def openDialog(self):
     self.initiateWidget('layouts/invoice_management.ui')
     self.Widget.referenceYear_spinBox.setValue(date.today().year)
     self.Widget.referenceMonth_spinBox.setValue(date.today().month)
     self.Widget.filter_pushButton.clicked.connect(self.load)
+    
+    self.Widget.invoices_table.cellDoubleClicked.connect(self.tableInvoiceWidget_cellDoubleClicked)
+    
     self.graphWidget = pg.PlotWidget()  
     self.Widget.chartArea_verticalLayout.addWidget(self.graphWidget)
 
     self.load()
     self.show()
-
 
   def loadChart(self, total, totalPaid, totalToPay):
     self.graphWidget.addItem(self.createBar([1],[total],'r'))

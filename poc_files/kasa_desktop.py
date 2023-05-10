@@ -77,10 +77,6 @@ def new_invoice_action():
 
   invoice.openDialog(current_bill_id, bill = get_current_bill_field(1))
 
-loader = QUiLoader()
-app = QtWidgets.QApplication(sys.argv)
-window = loader.load("layouts/kasa_desktop.ui", None)
-
 login =  kasa_login.Login(window)
 bill = kasa_bill.Bill(window)
 invoice = kasa_invoice.Invoice(window)
