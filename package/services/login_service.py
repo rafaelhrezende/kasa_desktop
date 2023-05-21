@@ -9,5 +9,4 @@ def authenticate(user_name, password):
 
 def get_user_data(token):
     result = requests.get(f"{KASA_SERVICE_URL}/users/me", headers = set_headers(token))
-    print(f"get_user_data result: {result}")
     return transform_result(result, '') 
