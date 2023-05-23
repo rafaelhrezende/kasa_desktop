@@ -4,12 +4,11 @@ from enum import Enum
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QHeaderView
 from package.ui.ui_mainwindow import Ui_MainWindow
 from package.views.login import LoginDialog
+from package.views.invoice import exec_invoice_form_dialog
 from package.models.login_model import Login
 import package.services.invoice_service as invoice_service
 from package.models.bill_model import load_bill_model
 import package.models.invoice_model as invoice_model
-
-import pdb # pdb.set_trace()
 
 class MonthEventOptions(Enum):
     NONE = 0
@@ -44,6 +43,7 @@ class MainWindow(QMainWindow):
         self.ui.previous_month_pushButton.clicked.connect(self.previous_month_pushButton_clicked)
         self.ui.current_month_label_pushButton.clicked.connect(self.current_month_label_pushButton_clicked)
         self.ui.bills_listView.clicked.connect(self.bills_listView_clicked)
+        self.ui.new_invoice_pushButton.clicked.connect(self.new_invoice_pushButton_clicked)
         
     def show(self)->None:
         QMainWindow.show(self)
@@ -56,17 +56,16 @@ class MainWindow(QMainWindow):
         self.load_invoice_totals()
     
     def load_invoices(self):
-        result = invoice_service.search_invoices_by_ref(self.current_login.user_token, self.date.year,self.date.month)
-        if result.success:
-            invoice_source = invoice_model.InvoiceModel(result.json())
-            self.ui.mainTableView.setModel(invoice_source)
-            date_delegate = invoice_model.DateDelegate(self.ui.mainTableView)
-            currency_delegate = invoice_model.CurrencyDelegate(self.ui.mainTableView)
-            
-            self.ui.mainTableView.setItemDelegateForColumn(4, currency_delegate)
-            self.ui.mainTableView.setItemDelegateForColumn(6, date_delegate)
-            self.ui.mainTableView.setItemDelegateForColumn(7, date_delegate)
-            self.ui.mainTableView.setItemDelegateForColumn(8, date_delegate)
+        invoice_list = invoice_model.list_invoices_from_searching(self.current_login.user_token, self.date.year, self.date.month)
+        main_table_invoice_model = invoice_model.InvoiceModel(invoice_list, ref_year = self.date.year, ref_month = self.date.month )
+        self.ui.mainTableView.setModel(main_table_invoice_model)
+        date_delegate = invoice_model.DateDelegate(self.ui.mainTableView)
+        currency_delegate = invoice_model.CurrencyDelegate(self.ui.mainTableView)
+        
+        self.ui.mainTableView.setItemDelegateForColumn(4, currency_delegate)
+        self.ui.mainTableView.setItemDelegateForColumn(6, date_delegate)
+        self.ui.mainTableView.setItemDelegateForColumn(7, date_delegate)
+        self.ui.mainTableView.setItemDelegateForColumn(8, date_delegate)
     
     def load_invoice_totals(self):
         result = invoice_service.search_invoices_totals_by_ref(self.current_login.user_token, self.date.year,self.date.month)
@@ -82,14 +81,19 @@ class MainWindow(QMainWindow):
         self.ui.bills_listView.setModel(self.bills_Model)
     
     def load_bill_invoices_TableView(self, bill_id:int):
-        model = invoice_model.invoice_model_from_bill_id(self.current_login.user_token, bill_id)
+        invoice_list = invoice_model.list_invoices_from_bill_id(self.current_login.user_token, bill_id)
+        model = invoice_model.InvoiceModel(invoice_list, bill_id = bill_id)
+        model.table_columns_index.remove('bill')
+        model.table_columns_header.remove('Conta')
+        model.table_columns_index.remove('completion_date')
+        model.table_columns_header.remove('Realização')
         self.ui.bill_invoices_TableView.setModel(model)
         #self.ui.bill_invoices_TableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        if model != None:
-            self.load_bill_invoices_totals(model.data_table)
+        if model != None and model.data_table != None:
+            self.load_bill_invoices_totals()
     
-    def load_bill_invoices_totals(self, data_table):
-        paid_invoices = [invoice for invoice in data_table if invoice['pay_day'] != None and date.fromisoformat(invoice['pay_day']) < date.today()]
+    def load_bill_invoices_totals(self):
+        paid_invoices = [invoice for invoice in self.ui.bill_invoices_TableView.model().data_table if invoice['pay_day'] != None and date.fromisoformat(invoice['pay_day']) < date.today()]
         len_invoices = len(paid_invoices)
         if len_invoices > 0:
             paid = sum(invoice['value'] for invoice in paid_invoices )
@@ -102,7 +106,6 @@ class MainWindow(QMainWindow):
                 if total_last_payments > 0:
                     avg = total_last_payments / 3
                     self.ui.bill_totals_Avg_value_label.setText('R$ {:,.2f}'.format(avg))
-            #pdb.set_trace()
             last_payment = paid_invoices[len_invoices-1]
             self.ui.bill_totals_LastPayment_value_label.setText('R$ {:,.2f}'.format(last_payment['value']))
     
@@ -147,4 +150,18 @@ class MainWindow(QMainWindow):
         self.clear_invoices_totals()
         selected_bill = self.bills_Model.get_bill(index)
         self.load_bill_invoices_TableView(selected_bill['id'])
+        
+    def new_invoice_pushButton_clicked(self):
+        selected_indexes = self.ui.bills_listView.selectedIndexes()
+        if len(selected_indexes) > 0:
+            bill = selected_indexes[0].model().get_bill(selected_indexes[0])
+            
+            if exec_invoice_form_dialog(self.current_login, bill):
+                self.ui.bill_invoices_TableView.model().reload(self.current_login.user_token)
+                self.ui.mainTableView.model().reload(self.current_login.user_token)
+                self.load_bill_invoices_totals()
+                self.load_invoice_totals()
+        else:#TODO call message box 
+            print('Bill not selected.')
+            
         

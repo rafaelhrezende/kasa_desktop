@@ -1,32 +1,42 @@
 from PySide6.QtCore import  QAbstractTableModel
 from PySide6.QtCore import Qt, QDate
 from PySide6.QtWidgets import QStyledItemDelegate
-from package.services.bill_service import get_bill_invoices
-#import pdb 
-#pdb.set_trace()
+import package.services.bill_service as bill_service
+import package.services.invoice_service as invoice_service #TODO refactor to single file or search_service  
 
 INVOICE_TABLE_COLUMNS_INDEX = ["id", "bill", "reference_year", "reference_month", "value", "method","due_date", "completion_date", "pay_day" ]
 INVOICE_TABLE_COLUMNS_HEADER = ["Id.", "Conta", "Ref. Ano", "Ref. Mês", "Valor", "Método","Vencimento", "Realização", "Pagamento" ]
 INVOICE_DATE_COLUMNS = ["due_date", "completion_date", "pay_day"]
 
-def invoice_model_from_bill_id(token, id:int):
-    request_result = get_bill_invoices(token, id)
+#TODO - Lookup on service
+INVOICE_METHODS = ['Débito Automático', 'PIX', 'Débito', 'Dinheiro']
+
+def list_invoices_from_bill_id(token, id:int):
+    request_result = bill_service.get_bill_invoices(token, id)
     if request_result.success:
-        result_model = InvoiceModel(request_result.json())
-        result_model.table_columns_index.remove('bill')
-        result_model.table_columns_header.remove('Conta')
-        result_model.table_columns_index.remove('completion_date')
-        result_model.table_columns_header.remove('Realização')
-        return result_model
+        return request_result.json()
+
+def list_invoices_from_searching(token,year, month):
+    request_result = invoice_service.search_invoices_by_ref(token, year, month)
+    if request_result:
+        return request_result.json()
+
+def create_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay):
+    return bill_service.create_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay)    
 
 class InvoiceModel(QAbstractTableModel):
-    def __init__(self, data, parent=None):
+    def __init__(self, data, bill_id = None, ref_year = None, ref_month = None, parent=None):
         super(InvoiceModel, self).__init__()
+        self.bill_id = bill_id
+        self.ref_year = ref_year
+        self.ref_month = ref_month
         self.data_table = data
         self.table_columns_index = INVOICE_TABLE_COLUMNS_INDEX.copy()
         self.table_columns_header = INVOICE_TABLE_COLUMNS_HEADER.copy()
 
     def rowCount(self, parent)->int:
+        if self.data_table is None:
+            return 0
         return len(self.data_table)
     
     def columnCount(self, parent)->int:
@@ -52,16 +62,15 @@ class InvoiceModel(QAbstractTableModel):
                 return None
         except:
             return None
-    
-    #def setData(self, index, value, role=QtCore.Qt.EditRole):
-     #   if role == QtCore.Qt.EditRole:
-      #      row = index.row()
-       #     column = index.column()
-        #    self.table_data[row][column] = value
-         #   self.dataChanged.emit(index, index)
-          #  return True
-        #return QtCore.QAbstractTableModel.setData(self, index, value, role)
 
+    def reload(self, token):
+        if self.bill_id != None:
+            self.data_table = list_invoices_from_bill_id(token, self.bill_id)
+            self.layoutChanged.emit()
+        elif self.ref_year != None and self.ref_month != None:
+            self.data_table = list_invoices_from_searching(token, self.ref_year, self.ref_month)
+            self.layoutChanged.emit()
+        
 class DateDelegate(QStyledItemDelegate):
     def displayText(self, value, locale):
         return value.toString() 
@@ -69,4 +78,5 @@ class DateDelegate(QStyledItemDelegate):
 class CurrencyDelegate(QStyledItemDelegate):
     def displayText(self, value, locale):
         return f"R$ {value}" 
-    
+
+ 

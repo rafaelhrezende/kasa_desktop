@@ -4,7 +4,6 @@ from package.services import bill_service
 def load_bill_model(token):
     request_result = bill_service.get_bills(token)
     if request_result.success:
-        print(f'load Bill results in {len(request_result.json())} bills')
         return BillModel(request_result.json())
 
 class BillModel(QAbstractListModel):
