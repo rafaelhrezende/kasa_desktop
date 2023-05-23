@@ -5,10 +5,12 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QHeaderView
 from package.ui.ui_mainwindow import Ui_MainWindow
 from package.views.login import LoginDialog
 from package.views.invoice import exec_invoice_form_dialog
+from package.views.bill import BillForm
 from package.models.login_model import Login
 import package.services.invoice_service as invoice_service
-from package.models.bill_model import load_bill_model
+from package.models.bill_model import BillModel
 import package.models.invoice_model as invoice_model
+from distlib import index
 
 class MonthEventOptions(Enum):
     NONE = 0
@@ -43,7 +45,9 @@ class MainWindow(QMainWindow):
         self.ui.previous_month_pushButton.clicked.connect(self.previous_month_pushButton_clicked)
         self.ui.current_month_label_pushButton.clicked.connect(self.current_month_label_pushButton_clicked)
         self.ui.bills_listView.clicked.connect(self.bills_listView_clicked)
+        self.ui.bills_listView.doubleClicked.connect(self.bills_listView_doubleClicked)
         self.ui.new_invoice_pushButton.clicked.connect(self.new_invoice_pushButton_clicked)
+        self.ui.new_bill_pushButton.clicked.connect(self.new_bill_pushButton_clicked)
         
     def show(self)->None:
         QMainWindow.show(self)
@@ -77,8 +81,7 @@ class MainWindow(QMainWindow):
             self.ui.messageOpen_value_label.setText('R$ {:,.2f}'.format(result.json()['pending']))
     
     def load_bills(self):
-        self.bills_Model = load_bill_model(self.current_login.user_token)
-        self.ui.bills_listView.setModel(self.bills_Model)
+        self.ui.bills_listView.setModel(BillModel(self.current_login))
     
     def load_bill_invoices_TableView(self, bill_id:int):
         invoice_list = invoice_model.list_invoices_from_bill_id(self.current_login.user_token, bill_id)
@@ -148,9 +151,15 @@ class MainWindow(QMainWindow):
     
     def bills_listView_clicked(self, index):
         self.clear_invoices_totals()
-        selected_bill = self.bills_Model.get_bill(index)
+        selected_bill = self.ui.bills_listView.model().get_bill(index)
         self.load_bill_invoices_TableView(selected_bill['id'])
-        
+    
+    def bills_listView_doubleClicked(self, index):
+        selected_bill = self.ui.bills_listView.model().get_bill(index)
+        bill_form = BillForm(self.current_login, selected_bill)
+        if bill_form.exec():
+            self.ui.bills_listView.model().reload()
+    
     def new_invoice_pushButton_clicked(self):
         selected_indexes = self.ui.bills_listView.selectedIndexes()
         if len(selected_indexes) > 0:
@@ -164,4 +173,8 @@ class MainWindow(QMainWindow):
         else:#TODO call message box 
             print('Bill not selected.')
             
-        
+    def new_bill_pushButton_clicked(self):
+        bill_form = BillForm(self.current_login)
+        if bill_form.exec():
+            self.ui.bills_listView.model().reload()
+    

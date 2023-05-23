@@ -31,10 +31,15 @@ class RequestMethods(Enum):
 def request_kasa_service(token, method:RequestMethods, resource_name, url_params = '', body = None ):
     if len(url_params) > 0:
         url_params = f'/?{url_params}'
-    if method == RequestMethods.POST:
-        return transform_result(requests.post(f'{KASA_SERVICE_URL}/{resource_name}{url_params}', headers = set_headers(token), json = body ), f'{method}: {resource_name} completed')
-    else:
-        return transform_result(requests.get(f'{KASA_SERVICE_URL}/{resource_name}{url_params}', headers = set_headers(token)), f'{method}: {resource_name} completed')
+    function = requests.get 
+    match method:
+        case RequestMethods.POST:
+           function = requests.post
+        case RequestMethods.PUT:
+            function = requests.put
+    
+    return transform_result(function(f'{KASA_SERVICE_URL}/{resource_name}{url_params}', headers = set_headers(token), json = body ), f'{method}: {resource_name} completed')
+    
     
     
     

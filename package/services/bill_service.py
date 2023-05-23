@@ -22,5 +22,20 @@ def create_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, co
       "completion_date": completionDate,
       "pay_day": payDay,
       "status": status
-      }
+    }
     return request_kasa_service(token, RequestMethods.POST, f'bills/{bill_id}/invoices/', body = body)
+
+def saveBill(token, title, description, category, payment_day, initial_value, is_active, bill_id = None):
+    body = {
+      "title": title,
+      "description": description,
+      "category": category,
+      "payment_day": payment_day,
+      "initial_value": initial_value,
+      "is_active": is_active
+    }
+
+    if bill_id is None:
+        return request_kasa_service(token, RequestMethods.POST, f'bills', body = body)
+    else:
+        return request_kasa_service(token, RequestMethods.PUT, f'bills/{bill_id}', body = body)

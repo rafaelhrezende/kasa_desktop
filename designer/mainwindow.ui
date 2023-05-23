@@ -603,9 +603,9 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QPushButton" name="pushButton_5">
+      <widget class="QPushButton" name="new_bill_pushButton">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="font">
         <font>
@@ -616,43 +616,7 @@
         <string>Inicia formulário para cadastro de nova cobrança</string>
        </property>
        <property name="text">
-        <string>Nova Conta</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_7">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Inícia formulário para edição da cobrança selecionada.</string>
-       </property>
-       <property name="text">
-        <string>Editar</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_8">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Remove cobrança selecionada.</string>
-       </property>
-       <property name="text">
-        <string>Remover</string>
+        <string>Cadastrar Nova Conta</string>
        </property>
       </widget>
      </item>

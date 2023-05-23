@@ -90,7 +90,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="title_lineEdit"/>
+       <widget class="QLineEdit" name="title_lineEdit">
+        <property name="model_name" stdset="0">
+         <string>title</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -117,7 +121,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="desc_lineEdit"/>
+       <widget class="QLineEdit" name="desc_lineEdit">
+        <property name="model_name" stdset="0">
+         <string>description</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -144,7 +152,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="category_lineEdit"/>
+       <widget class="QLineEdit" name="category_lineEdit">
+        <property name="model_name" stdset="0">
+         <string>category</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -177,6 +189,9 @@
         </property>
         <property name="maximum">
          <number>31</number>
+        </property>
+        <property name="model_name" stdset="0">
+         <string>payment_day</string>
         </property>
        </widget>
       </item>
@@ -224,7 +239,7 @@
          <string/>
         </property>
         <property name="model_name" stdset="0">
-         <string>value</string>
+         <string>initial_value</string>
         </property>
        </widget>
       </item>
@@ -255,7 +270,7 @@
       <item>
        <layout class="QHBoxLayout" name="activated_buttons_horizontalLayout">
         <item>
-         <widget class="QRadioButton" name="activated_false_radioButton">
+         <widget class="QRadioButton" name="activated_true_radioButton">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -267,10 +282,13 @@
           <property name="text">
            <string>Ativo</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="activated_true_radioButton">
+         <widget class="QRadioButton" name="activated_false_radioButton">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -351,6 +369,17 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>title_lineEdit</tabstop>
+  <tabstop>desc_lineEdit</tabstop>
+  <tabstop>category_lineEdit</tabstop>
+  <tabstop>pay_day_spinBox</tabstop>
+  <tabstop>initial_value_lineEdit</tabstop>
+  <tabstop>activated_true_radioButton</tabstop>
+  <tabstop>activated_false_radioButton</tabstop>
+  <tabstop>save_pushButton</tabstop>
+  <tabstop>cancel_pushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
