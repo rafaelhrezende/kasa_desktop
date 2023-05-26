@@ -21,8 +21,8 @@ def list_invoices_from_searching(token,year, month):
     if request_result:
         return request_result.json()
 
-def create_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay):
-    return bill_service.create_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay)    
+def save_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, invoice_id):
+    return bill_service.save_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, invoice_id = invoice_id)    
 
 class InvoiceModel(QAbstractTableModel):
     def __init__(self, data, bill_id = None, ref_year = None, ref_month = None, parent=None):
@@ -70,7 +70,10 @@ class InvoiceModel(QAbstractTableModel):
         elif self.ref_year != None and self.ref_month != None:
             self.data_table = list_invoices_from_searching(token, self.ref_year, self.ref_month)
             self.layoutChanged.emit()
-        
+            
+    def get_invoice(self, index):
+        return self.data_table[index.row()]
+    
 class DateDelegate(QStyledItemDelegate):
     def displayText(self, value, locale):
         return value.toString() 

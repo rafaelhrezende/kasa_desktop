@@ -381,5 +381,22 @@
   <tabstop>cancel_pushButton</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cancel_pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>597</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>521</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -1,6 +1,4 @@
-from PySide6.QtWidgets import QDialog
-
-import pdb
+from PySide6.QtWidgets import QDialog, QMessageBox
 
 PROPERTY_MODEL_NAME = 'model_name'
 
@@ -36,3 +34,22 @@ class BaseFormDialog(QDialog):
                 widget.setStyleSheet(self.widget_style_sheet_invalid)
             else:
                 widget.setStyleSheet(self.widget_style_sheet_valid)
+    
+    def show_error_message(self, message, detail = None):
+         show_error_message(message, detail)
+    
+def show_error_message(message:str, detail:str = None):
+        message_box = QMessageBox()
+        message_box.setText(message)
+        message_box.setInformativeText(detail)
+        
+        message_box.setIcon(QMessageBox.Icon.Critical)
+        return message_box.exec()
+
+def _permission_error_handler(fnc):
+    def handler( self, *args, **kwargs ):
+        try:
+            return fnc(self, *args, **kwargs)
+        except PermissionError:
+            show_error_message('Falha na autenticação!', 'Tente novamente ou retorne para Home e autentique novamente.')
+    return handler

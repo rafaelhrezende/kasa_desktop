@@ -65,6 +65,7 @@ class Ui_Dialog(object):
         self.messageLabel.setGeometry(QRect(10, 200, 381, 20))
         self.messageLabel.setScaledContents(False)
         self.messageLabel.setAlignment(Qt.AlignCenter)
+        QWidget.setTabOrder(self.userNameLineEdit, self.passwordLineEdit)
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -74,7 +75,7 @@ class Ui_Dialog(object):
     # setupUi
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
+        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Autentica\u00e7\u00e3o", None))
         self.passwordLabel.setText(QCoreApplication.translate("Dialog", u"Password", None))
         self.userNameLabel.setText(QCoreApplication.translate("Dialog", u"User Name", None))
         self.messageLabel.setText("")

@@ -218,6 +218,7 @@ class Ui_Dialog(object):
         QWidget.setTabOrder(self.save_pushButton, self.cancel_pushButton)
 
         self.retranslateUi(Dialog)
+        self.cancel_pushButton.clicked.connect(Dialog.reject)
 
         self.save_pushButton.setDefault(True)
 

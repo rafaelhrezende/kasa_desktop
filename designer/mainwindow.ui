@@ -453,24 +453,6 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Inicia formulário para cadastro de nova cobrança</string>
-       </property>
-       <property name="text">
-        <string>Criar Um</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="pushButton_4">
        <property name="enabled">
         <bool>false</bool>
@@ -484,43 +466,7 @@
         <string>Inicia processo de criação de todas cobranças não registradas no mês.</string>
        </property>
        <property name="text">
-        <string>Criar Todos</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Inícia formulário para edição da cobrança selecionada.</string>
-       </property>
-       <property name="text">
-        <string>Editar</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_3">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Remove cobrança selecionada.</string>
-       </property>
-       <property name="text">
-        <string>Remover</string>
+        <string>Criar cobranças do mês</string>
        </property>
       </widget>
      </item>
@@ -551,42 +497,6 @@
        </property>
        <property name="text">
         <string>Nova Cobrança</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_10">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Inícia formulário para edição da cobrança selecionada.</string>
-       </property>
-       <property name="text">
-        <string>Editar Cobrança</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_11">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Remove cobrança selecionada.</string>
-       </property>
-       <property name="text">
-        <string>Remover Cobrança</string>
        </property>
       </widget>
      </item>

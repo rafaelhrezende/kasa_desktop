@@ -13,7 +13,8 @@ class LoginDialog(QDialog):
     def init_ui(self):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.ui.userNameLineEdit.setText(self.current_login.user_name)    
+        self.ui.userNameLineEdit.setText(self.current_login.user_name)
+        self.ui.userNameLineEdit.setFocus()    
         
     def validate_current_login_state(self):
         result = login_service.get_user_data(self.current_login.user_token)

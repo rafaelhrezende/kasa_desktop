@@ -8,11 +8,13 @@ KASA_SERVICE_URL = 'http://0.0.0.0:8000'
 def set_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
-def transform_result(result, success_message):
-  if result:
-    return ServiceResult(True, success_message, result)
-  else:
-    return ServiceResult(False, result.text, result)
+def transform_result(result, success_message, raise_permission_error = True):
+    if result:
+        return ServiceResult(True, success_message, result)
+    elif result.status_code == 401 and raise_permission_error:
+        raise PermissionError()
+    else:
+        return ServiceResult(False, result.text, result)
 
 class ServiceResult:
   def __init__(self, success, message, result):

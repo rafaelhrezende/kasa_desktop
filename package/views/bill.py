@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog
 from package.ui.ui_bill_form import Ui_Dialog
 import package.services.bill_service as bill_service 
-from package.views.base_view import BaseFormDialog
+from package.views.base_view import BaseFormDialog, _permission_error_handler
 
 class BillForm(BaseFormDialog):
     def __init__(self, current_login, bill = None):
@@ -18,7 +18,7 @@ class BillForm(BaseFormDialog):
         if self.bill is None:
             return None
         return self.bill['id']
-    
+    @_permission_error_handler
     def save_pushButton_clicked(self):
         request_result = bill_service.saveBill(self.current_login.user_token,
                                                  self.ui.title_lineEdit.text(),
@@ -30,9 +30,11 @@ class BillForm(BaseFormDialog):
                                                  self.bill_id())
         if request_result.success:
             QDialog.accept(self)
-        else: #TODO show message to client
+        else:
             errors_loc = [error['loc'][2] for error in request_result.json()['detail']]
             self.validate_widget_invalid(errors_loc)
+            #TODO: Organizar mensagens e possibilitar tradução
+            self.show_error_message('Falha ao tentar salvar o registro', 'Verifique os campos indicados e tente novamente')
         
     def load_widget_input(self):
         self.ui.title_lineEdit.setText(self.bill['title'])
