@@ -22,7 +22,7 @@ def load_app_data():
     try:
         with open(app_data_file_path(), 'r') as file:
             app_data = json.loads(file.read())
-    except json.decoder.JSONDecodeError:
+    except (json.decoder.JSONDecodeError, FileNotFoundError):
         print('invalid Local file.')
         
 def save_to_file():
