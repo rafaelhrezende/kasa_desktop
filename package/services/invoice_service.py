@@ -1,6 +1,6 @@
 import sys
-import requests
-from requests.auth import HTTPBasicAuth
+#import requests
+#from requests.auth import HTTPBasicAuth
 from package.services.base_service import *
 
 def search_invoices_by_ref(token, refYear, refMonth):

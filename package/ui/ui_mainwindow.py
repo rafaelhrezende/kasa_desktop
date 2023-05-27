@@ -11,14 +11,15 @@
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QHeaderView,
-    QLabel, QListView, QMainWindow, QMenuBar,
-    QPushButton, QSizePolicy, QStatusBar, QTableView,
-    QVBoxLayout, QWidget)
+    QLabel, QListView, QMainWindow, QMenu,
+    QMenuBar, QPushButton, QSizePolicy, QStatusBar,
+    QTableView, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -26,11 +27,13 @@ class Ui_MainWindow(object):
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1900, 996)
         MainWindow.setMinimumSize(QSize(1900, 996))
+        self.action_process_manager = QAction(MainWindow)
+        self.action_process_manager.setObjectName(u"action_process_manager")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.mainTableView = QTableView(self.centralwidget)
         self.mainTableView.setObjectName(u"mainTableView")
-        self.mainTableView.setGeometry(QRect(70, 150, 971, 641))
+        self.mainTableView.setGeometry(QRect(70, 110, 971, 681))
         self.mainTableView.setLocale(QLocale(QLocale.Portuguese, QLocale.Brazil))
         self.mainTableView.horizontalHeader().setStretchLastSection(True)
         self.horizontalLayoutWidget = QWidget(self.centralwidget)
@@ -229,21 +232,6 @@ class Ui_MainWindow(object):
         self.bill_invoices_TableView.setLocale(QLocale(QLocale.Portuguese, QLocale.Brazil))
         self.bill_invoices_TableView.horizontalHeader().setStretchLastSection(True)
         self.bill_invoices_TableView.verticalHeader().setDefaultSectionSize(30)
-        self.horizontalLayoutWidget_3 = QWidget(self.centralwidget)
-        self.horizontalLayoutWidget_3.setObjectName(u"horizontalLayoutWidget_3")
-        self.horizontalLayoutWidget_3.setGeometry(QRect(70, 100, 971, 41))
-        self.horizontalLayout_2 = QHBoxLayout(self.horizontalLayoutWidget_3)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.pushButton_4 = QPushButton(self.horizontalLayoutWidget_3)
-        self.pushButton_4.setObjectName(u"pushButton_4")
-        self.pushButton_4.setEnabled(False)
-        font4 = QFont()
-        font4.setPointSize(12)
-        self.pushButton_4.setFont(font4)
-
-        self.horizontalLayout_2.addWidget(self.pushButton_4)
-
         self.horizontalLayoutWidget_4 = QWidget(self.centralwidget)
         self.horizontalLayoutWidget_4.setObjectName(u"horizontalLayoutWidget_4")
         self.horizontalLayoutWidget_4.setGeometry(QRect(1130, 660, 651, 45))
@@ -253,6 +241,8 @@ class Ui_MainWindow(object):
         self.new_invoice_pushButton = QPushButton(self.horizontalLayoutWidget_4)
         self.new_invoice_pushButton.setObjectName(u"new_invoice_pushButton")
         self.new_invoice_pushButton.setEnabled(True)
+        font4 = QFont()
+        font4.setPointSize(12)
         self.new_invoice_pushButton.setFont(font4)
 
         self.horizontalLayout_3.addWidget(self.new_invoice_pushButton)
@@ -357,10 +347,15 @@ class Ui_MainWindow(object):
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 1900, 30))
+        self.menuProcessos = QMenu(self.menubar)
+        self.menuProcessos.setObjectName(u"menuProcessos")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
+
+        self.menubar.addAction(self.menuProcessos.menuAction())
+        self.menuProcessos.addAction(self.action_process_manager)
 
         self.retranslateUi(MainWindow)
 
@@ -369,6 +364,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.action_process_manager.setText(QCoreApplication.translate("MainWindow", u"Gerenciador de Processos", None))
 #if QT_CONFIG(tooltip)
         self.messageTotal_title_label.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Sum of invoices's values</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
@@ -400,10 +396,6 @@ class Ui_MainWindow(object):
         self.header_invoices_label.setText(QCoreApplication.translate("MainWindow", u"Cobran\u00e7as M\u00eas", None))
         self.header_bills_label.setText(QCoreApplication.translate("MainWindow", u"Cadastro de Contas", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_4.setToolTip(QCoreApplication.translate("MainWindow", u"Inicia processo de cria\u00e7\u00e3o de todas cobran\u00e7as n\u00e3o registradas no m\u00eas.", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_4.setText(QCoreApplication.translate("MainWindow", u"Criar cobran\u00e7as do m\u00eas", None))
-#if QT_CONFIG(tooltip)
         self.new_invoice_pushButton.setToolTip(QCoreApplication.translate("MainWindow", u"Inicia formul\u00e1rio para cadastro de nova cobran\u00e7a", None))
 #endif // QT_CONFIG(tooltip)
         self.new_invoice_pushButton.setText(QCoreApplication.translate("MainWindow", u"Nova Cobran\u00e7a", None))
@@ -426,5 +418,6 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.bill_totals_LastPayment_title_label.setText(QCoreApplication.translate("MainWindow", u"\u00daltimo Pagamento", None))
         self.bill_totals_LastPayment_value_label.setText("")
+        self.menuProcessos.setTitle(QCoreApplication.translate("MainWindow", u"Processos", None))
     # retranslateUi
 

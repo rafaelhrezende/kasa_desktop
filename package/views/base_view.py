@@ -36,15 +36,21 @@ class BaseFormDialog(QDialog):
                 widget.setStyleSheet(self.widget_style_sheet_valid)
     
     def show_error_message(self, message, detail = None):
-         show_error_message(message, detail)
+         return show_message(message, detail, QMessageBox.Icon.Critical)
     
-def show_error_message(message:str, detail:str = None):
-        message_box = QMessageBox()
-        message_box.setText(message)
-        message_box.setInformativeText(detail)
+    def show_info_message(self, message, detail = None):
+        return show_message(message, detail, QMessageBox.Icon.Information)
+
+def show_message(message:str, detail:str, icon:QMessageBox.Icon):
+    message_box = QMessageBox()
+    message_box.setText(message)
+    message_box.setInformativeText(detail)
+    message_box.setIcon(icon)
+    return message_box.exec()
         
-        message_box.setIcon(QMessageBox.Icon.Critical)
-        return message_box.exec()
+def show_error_message(message:str, detail:str = None):
+    return show_message(message, detail, QMessageBox.Icon.Critical)
+    
 
 def _permission_error_handler(fnc):
     def handler( self, *args, **kwargs ):

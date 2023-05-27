@@ -7,6 +7,7 @@ import package.views.base_view as base_view
 from package.views.login import LoginDialog
 from package.views.invoice import InvoiceForm
 from package.views.bill import BillForm
+from package.views.process_manager import ProcessManagerForm
 from package.models.login_model import Login
 import package.services.invoice_service as invoice_service
 from package.models.bill_model import BillModel
@@ -50,6 +51,7 @@ class MainWindow(QMainWindow):
         self.ui.new_bill_pushButton.clicked.connect(self.new_bill_pushButton_clicked)
         self.ui.bill_invoices_TableView.doubleClicked.connect(self.bill_invoices_TableView_doubleClicked)
         self.ui.mainTableView.doubleClicked.connect(self.mainTableView_doubleClicked)
+        self.ui.action_process_manager.triggered.connect(self.action_process_manager_triggered) 
         
     def show(self)->None:
         QMainWindow.show(self)
@@ -154,7 +156,8 @@ class MainWindow(QMainWindow):
     
     @_permission_error_handler
     def reload_invoices_views(self):
-        self.ui.bill_invoices_TableView.model().reload(self.current_login.user_token)
+        if self.ui.bill_invoices_TableView.model() != None:
+            self.ui.bill_invoices_TableView.model().reload(self.current_login.user_token)
         self.ui.mainTableView.model().reload(self.current_login.user_token)
         self.load_bill_invoices_totals()
         self.load_invoice_totals()
@@ -216,4 +219,7 @@ class MainWindow(QMainWindow):
         if invoice_form_dialog.exec():
             self.reload_invoices_views()
 
-    
+    def action_process_manager_triggered(self):
+        ProcessManagerForm(self.current_login).exec()
+        
+        

@@ -2,3 +2,4 @@ eclipse.preferences.version=1
 encoding//package/ui/ui_invoice_form.py=utf-8
 encoding//package/ui/ui_login_dialog.py=utf-8
 encoding//package/ui/ui_mainwindow.py=utf-8
+encoding//package/ui/ui_process_manager_dialog.py=utf-8

@@ -24,9 +24,9 @@
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>150</y>
+      <y>110</y>
       <width>971</width>
-      <height>641</height>
+      <height>681</height>
      </rect>
     </property>
     <property name="locale">
@@ -442,36 +442,6 @@
      <number>30</number>
     </attribute>
    </widget>
-   <widget class="QWidget" name="horizontalLayoutWidget_3">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>100</y>
-      <width>971</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="pushButton_4">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Inicia processo de criação de todas cobranças não registradas no mês.</string>
-       </property>
-       <property name="text">
-        <string>Criar cobranças do mês</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QWidget" name="horizontalLayoutWidget_4">
     <property name="geometry">
      <rect>
@@ -706,8 +676,20 @@
      <height>30</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuProcessos">
+    <property name="title">
+     <string>Processos</string>
+    </property>
+    <addaction name="action_process_manager"/>
+   </widget>
+   <addaction name="menuProcessos"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_process_manager">
+   <property name="text">
+    <string>Gerenciador de Processos</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
