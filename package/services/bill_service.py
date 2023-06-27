@@ -2,43 +2,49 @@ import sys
 import requests
 from requests.auth import HTTPBasicAuth
 from package.services.base_service import *
+from package.services.database import crud
+from package.services.database import models
 
-def get_bills(token):
-    return request_kasa_service(token, RequestMethods.GET, 'bills')
+@service_handler
+def get_bills():
+    return crud.get_bills()
 
-def get_bill(token, id:int):
-    return request_kasa_service(token, RequestMethods.GET, f'bills/{id}')
+@service_handler
+def get_bill(id:int):
+    return crud.get_bill(id)
 
-def get_bill_invoices(token, id:int):
-    return request_kasa_service(token, RequestMethods.GET, f'bills/{id}/invoices')
+@service_handler
+def get_bill_invoices(bill_id:int):
+    return crud.get_invoices(bill_id)
 
-def save_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, status=-1, invoice_id = None):
-    body = {
-      "method": method,
-      "reference_year": refYear,
-      "reference_month": refMonth,
-      "value": value,
-      "due_date": dueDate,
-      "completion_date": completionDate,
-      "pay_day": payDay,
-      "status": status
-    }
-    if invoice_id is None:
-        return request_kasa_service(token, RequestMethods.POST, f'bills/{bill_id}/invoices/', body = body)
-    else:
-        return request_kasa_service(token, RequestMethods.PUT, f'bills/{bill_id}/invoices/{invoice_id}', body = body)
+@service_handler
+def save_invoice(bill_id, reference_year, reference_month, value, method, due_date, completion_date, pay_day, status=-1, invoice_id = None):
+    invoice = models.Invoice(
+        id=invoice_id,
+        method=method,
+        reference_year=reference_year,
+        reference_month=reference_month,
+        description='',
+        value=value,
+        due_date=convert_text_to_date(due_date),
+        completion_date=convert_text_to_date(completion_date),
+        pay_day=convert_text_to_date(pay_day),
+        status=status,
+        bill_id=bill_id)
+    
+    return crud.save_invoice(invoice)
 
-def saveBill(token, title, description, category, payment_day, initial_value, is_active, bill_id = None):
-    body = {
-      "title": title,
-      "description": description,
-      "category": category,
-      "payment_day": payment_day,
-      "initial_value": initial_value,
-      "is_active": is_active
-    }
+@service_handler
+def saveBill(title, description, category, payment_day, initial_value, is_active, bill_id = None):
+    bill = models.Bill(
+        id=bill_id,
+        title=title,
+        description=description,
+        category=category,
+        initial_value=initial_value,
+        payment_day=payment_day,
+        is_active=is_active)
+    
+    return crud.save_bill(bill)
 
-    if bill_id is None:
-        return request_kasa_service(token, RequestMethods.POST, f'bills', body = body)
-    else:
-        return request_kasa_service(token, RequestMethods.PUT, f'bills/{bill_id}', body = body)
+

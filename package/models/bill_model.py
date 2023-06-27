@@ -1,18 +1,19 @@
 from PySide6.QtCore import  QAbstractListModel, QModelIndex, Qt
 from package.services import bill_service
 
-def list_bills(token):
-    request_result = bill_service.get_bills(token)
-    if request_result.success:
-        return request_result.json()
-    else: #TODO Inform User
-        print("loading bill fails")
+def list_bills():
+    result = bill_service.get_bills()
+    if result.status:
+        return result.contents
+    else:
+#TODO: Informar Erro ao usuarios
+        return []
+    
 
 class BillModel(QAbstractListModel):
-    def __init__(self, current_login, parent=None):
+    def __init__(self, parent=None):
         super(BillModel, self).__init__()
-        self.current_login = current_login
-        self.data_source = list_bills(self.current_login.user_token)
+        self.data_source = list_bills()
 
     def rowCount(self, parent)->int:
         return len(self.data_source)
@@ -21,7 +22,7 @@ class BillModel(QAbstractListModel):
         try:
             if role == Qt.DisplayRole:
                 __current = self.data_source[index.row()]
-                return f"{__current['id']} - {__current['title']}: R$ {__current['initial_value']}"
+                return __current.to_string()
             else:
                 return None
         except Exception as e:
@@ -31,5 +32,5 @@ class BillModel(QAbstractListModel):
         return self.data_source[index.row()]
 
     def reload(self):
-        self.data_source = list_bills(self.current_login.user_token)
+        self.data_source = list_bills()
         self.layoutChanged.emit()
