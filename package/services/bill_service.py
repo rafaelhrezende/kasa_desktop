@@ -1,6 +1,4 @@
 import sys
-import requests
-from requests.auth import HTTPBasicAuth
 from package.services.base_service import *
 from package.services.database import crud
 from package.services.database import models
