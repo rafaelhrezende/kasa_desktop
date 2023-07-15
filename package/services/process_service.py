@@ -1,15 +1,19 @@
 from package.services.base_service import *
+from package.services.database import crud
+from package.services.database.models import Process
+from package.services.tasks.invoices_process import execute_process
 
-def get_processes(token):
-    return request_kasa_service(token, RequestMethods.GET, f'processes/')
+@service_handler
+def get_processes():
+    return crud.get_processes()
 
-def get_process(token, id:int):
-    return request_kasa_service(token, RequestMethods.GET, f'processes/{id}')
+@service_handler
+def get_process(id:int):
+    return crud.get_process(id)
 
-def new_process(token, process_key:str, params:dict):
-    body = {
-        "process_key": process_key,
-        "params":  [{'name': param, 'value': params[param]} for param in params] 
-    }
-    return request_kasa_service(token, RequestMethods.POST, f'processes/', body = body)
-        
+@service_handler
+def start_process(process_key:str, params:dict):
+    process = Process() 
+    process.process_key = process_key
+    process = crud.save_process(process)
+    execute_process(process, params)

@@ -1,47 +1,31 @@
 import sys
-import requests
-from requests.auth import HTTPBasicAuth
-from enum import Enum 
+import logging
+from datetime import datetime
+from enum import Enum
+from sqlalchemy.exc import StatementError
+ 
+def convert_text_to_date(text):
+    try:
+        if len(text) > 2:
+            return datetime.strptime(text, '%d/%m/%Y')
+        return None
+    except ValueError as e:
+        print('invalid date format')
+        raise e
 
-KASA_SERVICE_URL = 'http://0.0.0.0:8000'
+class Result:
+    def __init__(self, status, contents, message = None):
+        self.status = status
+        self.contents = contents
+        self.message = message
 
-def set_headers(token):
-    return {"Authorization": f"Bearer {token}"}
-
-def transform_result(result, success_message, raise_permission_error = True):
-    if result:
-        return ServiceResult(True, success_message, result)
-    elif result.status_code == 401 and raise_permission_error:
-        raise PermissionError()
-    else:
-        return ServiceResult(False, result.text, result)
-
-class ServiceResult:
-  def __init__(self, success, message, result):
-    self.success = success
-    self.message = message
-    self.result = result
-  
-  def json(self):
-    return self.result.json()
-
-class RequestMethods(Enum):
-    GET = 'get'
-    POST = 'post'
-    PUT = 'put'
-
-def request_kasa_service(token, method:RequestMethods, resource_name, url_params = '', body = None ):
-    if len(url_params) > 0:
-        url_params = f'/?{url_params}'
-    function = requests.get 
-    match method:
-        case RequestMethods.POST:
-           function = requests.post
-        case RequestMethods.PUT:
-            function = requests.put
-    
-    return transform_result(function(f'{KASA_SERVICE_URL}/{resource_name}{url_params}', headers = set_headers(token), json = body ), f'{method}: {resource_name} completed')
-    
-    
+def service_handler(fnc):
+    def handler(*args, **kwargs):
+        try:
+            return Result(True, fnc(*args, **kwargs))
+        except:
+            logging.warning(sys.exc_info())
+            return Result(False, None)
+    return handler
     
     

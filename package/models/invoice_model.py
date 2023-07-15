@@ -4,6 +4,8 @@ from PySide6.QtWidgets import QStyledItemDelegate
 import package.services.bill_service as bill_service
 import package.services.invoice_service as invoice_service #TODO refactor to single file or search_service  
 
+import pdb # pdb.set_trace()
+
 INVOICE_TABLE_COLUMNS_INDEX = ["id", "bill", "reference_year", "reference_month", "value", "method","due_date", "completion_date", "pay_day" ]
 INVOICE_TABLE_COLUMNS_HEADER = ["Id.", "Conta", "Ref. Ano", "Ref. Mês", "Valor", "Método","Vencimento", "Realização", "Pagamento" ]
 INVOICE_DATE_COLUMNS = ["due_date", "completion_date", "pay_day"]
@@ -11,18 +13,20 @@ INVOICE_DATE_COLUMNS = ["due_date", "completion_date", "pay_day"]
 #TODO - Lookup on service
 INVOICE_METHODS = ['Débito Automático', 'PIX', 'Débito', 'Dinheiro']
 
-def list_invoices_from_bill_id(token, id:int):
-    request_result = bill_service.get_bill_invoices(token, id)
-    if request_result.success:
-        return request_result.json()
+def list_invoices_from_bill_id(id:int):
+    result = bill_service.get_bill_invoices(id)
+    if result.status:
+        return result.contents
+    else:
+        return [] 
 
-def list_invoices_from_searching(token,year, month):
-    request_result = invoice_service.search_invoices_by_ref(token, year, month)
-    if request_result:
-        return request_result.json()
+def list_invoices_from_searching(year, month):
+    result = invoice_service.search_invoices_by_ref(year, month)
+    if result.status:
+        return result.contents
 
-def save_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, invoice_id):
-    return bill_service.save_invoice(token, bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, invoice_id = invoice_id)    
+def save_invoice(bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, invoice_id):
+    return bill_service.save_invoice(bill_id, refYear, refMonth, value, method, dueDate, completionDate, payDay, invoice_id = invoice_id)    
 
 class InvoiceModel(QAbstractTableModel):
     def __init__(self, data, bill_id = None, ref_year = None, ref_month = None, parent=None):
@@ -51,24 +55,22 @@ class InvoiceModel(QAbstractTableModel):
         try:
             if role == Qt.DisplayRole:
                 column_name = self.table_columns_index[index.column()]
-                if column_name == 'bill':
-                    return self.data_table[index.row()]['bill']['title']
+                
                 if column_name in INVOICE_DATE_COLUMNS:
-                    date_value = self.data_table[index.row()][self.table_columns_index[index.column()]]
-                    return QDate.fromString(date_value, 'yyyy-MM-dd')
+                    return QDate(self.data_table[index.row()].get_field(column_name))
                 else:
-                    return self.data_table[index.row()][self.table_columns_index[index.column()]]
+                    return self.data_table[index.row()].get_field(column_name)
             else:
                 return None
         except:
             return None
 
-    def reload(self, token):
+    def reload(self):
         if self.bill_id != None:
-            self.data_table = list_invoices_from_bill_id(token, self.bill_id)
+            self.data_table = list_invoices_from_bill_id(self.bill_id)
             self.layoutChanged.emit()
         elif self.ref_year != None and self.ref_month != None:
-            self.data_table = list_invoices_from_searching(token, self.ref_year, self.ref_month)
+            self.data_table = list_invoices_from_searching(self.ref_year, self.ref_month)
             self.layoutChanged.emit()
             
     def get_invoice(self, index):

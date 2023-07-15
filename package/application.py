@@ -1,4 +1,5 @@
 import sys
+
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog
 from package.views.main_window import MainWindow        
 from package import local_storage 

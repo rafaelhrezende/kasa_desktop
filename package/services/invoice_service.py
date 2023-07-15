@@ -1,11 +1,26 @@
 import sys
-#import requests
-#from requests.auth import HTTPBasicAuth
+from datetime import date
 from package.services.base_service import *
+from package.services.database import crud
 
-def search_invoices_by_ref(token, refYear, refMonth):
-    return request_kasa_service(token, RequestMethods.GET, 'invoices', f'reference_year={refYear}&reference_month={refMonth}')
+@service_handler
+def search_invoices_by_ref(reference_year, reference_month):
+    return crud.search_invoices(reference_year, reference_month)
 
-def search_invoices_totals_by_ref(token, refYear, refMonth):
-    return request_kasa_service(token, RequestMethods.GET, 'invoices/totals', f'reference_year={refYear}&reference_month={refMonth}')
-
+@service_handler
+def search_invoices_totals_by_ref(reference_year, reference_month):
+    invoices = crud.search_invoices(reference_year, reference_month)
+    total = sum(invoice.value for invoice in invoices)
+    paid = sum(invoice.value for invoice in invoices
+                if invoice.pay_day is not None and invoice.pay_day <= date.today())
+    to_pay = total - paid
+    scheduled = sum(invoice.value for invoice in invoices
+                    if invoice.pay_day is not None and invoice.pay_day > date.today())
+    pending = to_pay - scheduled
+    return {
+        'total': total,
+        'paid': paid,
+        'to_pay': to_pay,
+        'scheduled': scheduled,
+        'pending': pending
+        }

@@ -7,16 +7,15 @@ from package.views.base_view import BaseFormDialog, _permission_error_handler
 PROPERTY_MODEL_NAME = 'model_name'
 
 class InvoiceForm(BaseFormDialog):
-    def __init__(self, current_login, bill, invoice = None):
+    def __init__(self, bill, invoice = None):
         super(InvoiceForm, self).__init__(Ui_Dialog())
-        self.current_login = current_login
         self.bill = bill
         self.invoice = invoice
         
         if invoice != None:
             self.load_widget_input()
-            if self.bill is None and 'bill' in self.invoice.keys():
-                self.bill = self.invoice['bill']
+            if self.bill is None and self.invoice.bill != None:
+                self.bill = self.invoice.bill
         
         self.change_bill_title()
     
@@ -25,7 +24,7 @@ class InvoiceForm(BaseFormDialog):
         self.ui.method_comboBox.addItems(INVOICE_METHODS)
         
     def change_bill_title(self):
-        self.ui.bill_title_label.setText(f"{self.bill['id']} - {self.bill['title']}")
+        self.ui.bill_title_label.setText(self.bill.to_string())
         
     def connect_slots(self):
         self.ui.save_pushButton.clicked.connect(self.save_pushButton_clicked)
@@ -33,31 +32,32 @@ class InvoiceForm(BaseFormDialog):
     def invoice_id(self):
         if self.invoice is None:
             return None
-        return self.invoice['id']
+        return self.invoice.id
     
     @_permission_error_handler
     def save_pushButton_clicked(self):
-        result = save_invoice(self.current_login.user_token, 
-                       self.bill['id'],
-                       self.ui.year_spinBox.cleanText(),
-                       self.ui.month_spinBox.cleanText(),
-                       self.ui.value_lineEdit.text(),
-                       self.ui.method_comboBox.currentText(),
-                       self.lineEdit_text_to_service_date_format(self.ui.due_date_lineEdit),
-                       self.lineEdit_text_to_service_date_format(self.ui.completion_lineEdit),
-                       self.lineEdit_text_to_service_date_format(self.ui.pay_day_lineEdit),
-                       self.invoice_id())
-        if result.success:
+        result = save_invoice(self.bill.id,
+                               self.ui.year_spinBox.cleanText(),
+                               self.ui.month_spinBox.cleanText(),
+                               self.ui.value_lineEdit.text(),
+                               self.ui.method_comboBox.currentText(),
+                               self.ui.due_date_lineEdit.text(),
+                               self.ui.completion_lineEdit.text(),
+                               self.ui.pay_day_lineEdit.text(),
+                               self.invoice_id())
+        if result.status:
             QDialog.accept(self)
         else:
-            #TODO Remove validation - check status code on service and raise 
-            if result.json()['detail'].__class__ == str:
-                print("NOT IMPLEMENTED")
-            else:
-                errors_loc = [error['loc'][2] for error in result.json()['detail']]
-                self.validate_widget_invalid(errors_loc)
-            #TODO: Organizar mensagens e possibilitar tradução
+            print(f"Invoice - save_pushButton_clicked Error. {result.contents}")
             self.show_error_message('Falha ao tentar salvar o registro', 'Verifique os campos indicados e tente novamente')
+            #TODO Remove validation - check status code on service and raise 
+          #  if result.json()['detail'].__class__ == str:
+          #      print("NOT IMPLEMENTED")
+          #  else:
+          #      errors_loc = [error['loc'][2] for error in result.json()['detail']]
+          #      self.validate_widget_invalid(errors_loc)
+            #TODO: Organizar mensagens e possibilitar tradução
+            
             
     def lineEdit_text_to_service_date_format(self, widget):
         try:
@@ -81,15 +81,20 @@ class InvoiceForm(BaseFormDialog):
             raise e
 
     def load_widget_input(self):
-        self.ui.year_spinBox.setValue(self.invoice['reference_year'])
-        self.ui.month_spinBox.setValue(self.invoice['reference_month'])
-        self.ui.value_lineEdit.setText(str(self.invoice['value']))
-        method_index = self.ui.method_comboBox.findText(self.invoice['method'])
+        self.ui.year_spinBox.setValue(self.invoice.reference_year)
+        self.ui.month_spinBox.setValue(self.invoice.reference_month)
+        self.ui.value_lineEdit.setText(str(self.invoice.value))
+        method_index = self.ui.method_comboBox.findText(self.invoice.method)
         if method_index >= 0:
             self.ui.method_comboBox.setCurrentIndex(method_index)
-        self.ui.due_date_lineEdit.setText(self.service_date_to_lineEdit_text_format(self.invoice['due_date']))
-        self.ui.completion_lineEdit.setText(self.service_date_to_lineEdit_text_format(self.invoice['completion_date']))
-        self.ui.pay_day_lineEdit.setText(self.service_date_to_lineEdit_text_format(self.invoice['pay_day']))
-
-
+        
+        if self.invoice.due_date != None:
+            self.ui.due_date_lineEdit.setText(self.invoice.due_date.strftime('%d/%m/%Y'))
+        
+        if self.invoice.completion_date != None:
+            self.ui.completion_lineEdit.setText(self.invoice.completion_date.strftime('%d/%m/%Y'))
+        
+        if self.invoice.pay_day != None:
+            self.ui.pay_day_lineEdit.setText(self.invoice.pay_day.strftime('%d/%m/%Y'))
+        
             
