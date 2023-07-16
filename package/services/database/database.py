@@ -6,14 +6,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import Session
 
 _print_sql = False
-
-env = os.getenv('KASA_DESKTOP_ENV', 'DEV')
-if env == 'PROD':
-    db_name = 'kasa_desktop_base.db'
-else:
-    db_name = 'kasa_desktop_dev.db'
     
-engine = create_engine(f"sqlite:///./{db_name}",echo=_print_sql) #, connect_args={"check_same_thread": False})
+engine = create_engine(f"sqlite:///./kasa_desktop.db",echo=_print_sql) #, connect_args={"check_same_thread": False})
 
 #data_session = Session(engine)
 def get_data_session():
