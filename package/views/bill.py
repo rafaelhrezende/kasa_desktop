@@ -30,9 +30,6 @@ class BillForm(BaseFormDialog):
             QDialog.accept(self)
         else:
             print(f'Bill - save_pushButton_clicked. Error: {result.contents}')
-            #errors_loc = [error['loc'][2] for error in request_result.json()['detail']]
-            #self.validate_widget_invalid(errors_loc)
-            #TODO: Organizar mensagens e possibilitar tradução
             self.show_error_message('Falha ao tentar salvar o registro', 'Verifique os campos indicados e tente novamente')
         
     def load_widget_input(self):

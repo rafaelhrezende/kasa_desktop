@@ -96,3 +96,25 @@ def save_process(data_session, process: models.Process):
         data_session.commit()
         data_session.refresh(process)
         return process
+
+@crud_handler
+def get_invoice_details(data_session, invoice_id: int):
+    return data_session.query(models.InvoiceDetail).\
+            filter(models.InvoiceDetail.invoice_id == invoice_id).all()
+
+@crud_handler
+def save_invoice_detail(data_session, invoice_detail: models.InvoiceDetail):
+    if invoice_detail.id is not None:
+        db_invoice_detail = data_session.get(models.InvoiceDetail, invoice_detail.id)
+        db_invoice_detail.description = invoice_detail.description
+        db_invoice_detail.value = invoice_detail.value
+        db_invoice_detail.date = invoice_detail.date
+        db_invoice_detail.locale_description = invoice_detail.locale_description
+        data_session.commit()
+    else:
+        data_session.add(invoice_detail)
+        data_session.commit()
+        data_session.refresh(invoice_detail)
+    return invoice_detail
+
+
