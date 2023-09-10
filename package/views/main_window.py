@@ -12,8 +12,6 @@ import package.services.invoice_service as invoice_service
 from package.models.bill_model import BillModel
 import package.models.invoice_model as invoice_model
 
-import pdb
-
 class MonthEventOptions(Enum):
     NONE = 0
     NEXT = 1

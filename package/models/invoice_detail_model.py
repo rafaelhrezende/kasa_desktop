@@ -2,7 +2,6 @@ from PySide6.QtCore import  QAbstractTableModel
 from PySide6.QtCore import Qt, QDate
 from PySide6.QtWidgets import QStyledItemDelegate
 import package.services.bill_service as bill_service
-from distlib import index
 
 TABLE_COLUMNS_INDEX = ["id", "description", "value", "date", "locale_description"]
 TABLE_COLUMNS_HEADER = ["Id", "Descrição", "Valor R$", "Data", "Localidade"]
