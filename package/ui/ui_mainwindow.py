@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mainwindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.5.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -16,10 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QHeaderView,
-    QLabel, QListView, QMainWindow, QMenu,
-    QMenuBar, QPushButton, QSizePolicy, QStatusBar,
-    QTableView, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QHBoxLayout,
+    QHeaderView, QLabel, QListView, QMainWindow,
+    QMenu, QMenuBar, QPushButton, QSizePolicy,
+    QStatusBar, QTableView, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -216,7 +216,7 @@ class Ui_MainWindow(object):
         self.header_invoices_label.setFont(font2)
         self.bills_listView = QListView(self.centralwidget)
         self.bills_listView.setObjectName(u"bills_listView")
-        self.bills_listView.setGeometry(QRect(1220, 140, 471, 511))
+        self.bills_listView.setGeometry(QRect(1130, 140, 471, 511))
         font3 = QFont()
         font3.setPointSize(12)
         font3.setBold(False)
@@ -224,17 +224,19 @@ class Ui_MainWindow(object):
         self.bills_listView.setFont(font3)
         self.header_bills_label = QLabel(self.centralwidget)
         self.header_bills_label.setObjectName(u"header_bills_label")
-        self.header_bills_label.setGeometry(QRect(1310, 10, 281, 51))
+        self.header_bills_label.setGeometry(QRect(1130, 30, 471, 51))
         self.header_bills_label.setFont(font2)
+        self.header_bills_label.setAlignment(Qt.AlignCenter)
         self.bill_invoices_TableView = QTableView(self.centralwidget)
         self.bill_invoices_TableView.setObjectName(u"bill_invoices_TableView")
-        self.bill_invoices_TableView.setGeometry(QRect(1130, 700, 651, 241))
+        self.bill_invoices_TableView.setGeometry(QRect(1130, 700, 721, 241))
         self.bill_invoices_TableView.setLocale(QLocale(QLocale.Portuguese, QLocale.Brazil))
+        self.bill_invoices_TableView.setSelectionMode(QAbstractItemView.SingleSelection)
         self.bill_invoices_TableView.horizontalHeader().setStretchLastSection(True)
         self.bill_invoices_TableView.verticalHeader().setDefaultSectionSize(30)
         self.horizontalLayoutWidget_4 = QWidget(self.centralwidget)
         self.horizontalLayoutWidget_4.setObjectName(u"horizontalLayoutWidget_4")
-        self.horizontalLayoutWidget_4.setGeometry(QRect(1130, 660, 651, 45))
+        self.horizontalLayoutWidget_4.setGeometry(QRect(1130, 655, 721, 41))
         self.horizontalLayout_3 = QHBoxLayout(self.horizontalLayoutWidget_4)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -247,9 +249,23 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_3.addWidget(self.new_invoice_pushButton)
 
+        self.edit_invoice_pushButton = QPushButton(self.horizontalLayoutWidget_4)
+        self.edit_invoice_pushButton.setObjectName(u"edit_invoice_pushButton")
+        self.edit_invoice_pushButton.setEnabled(False)
+        self.edit_invoice_pushButton.setFont(font4)
+
+        self.horizontalLayout_3.addWidget(self.edit_invoice_pushButton)
+
+        self.details_invoice_pushButton = QPushButton(self.horizontalLayoutWidget_4)
+        self.details_invoice_pushButton.setObjectName(u"details_invoice_pushButton")
+        self.details_invoice_pushButton.setEnabled(True)
+        self.details_invoice_pushButton.setFont(font4)
+
+        self.horizontalLayout_3.addWidget(self.details_invoice_pushButton)
+
         self.horizontalLayoutWidget_5 = QWidget(self.centralwidget)
         self.horizontalLayoutWidget_5.setObjectName(u"horizontalLayoutWidget_5")
-        self.horizontalLayoutWidget_5.setGeometry(QRect(1220, 99, 471, 45))
+        self.horizontalLayoutWidget_5.setGeometry(QRect(1130, 90, 471, 45))
         self.horizontalLayout_4 = QHBoxLayout(self.horizontalLayoutWidget_5)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -262,7 +278,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayoutWidget = QWidget(self.centralwidget)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(1694, 220, 202, 311))
+        self.verticalLayoutWidget.setGeometry(QRect(1650, 220, 202, 311))
         self.bill_totals_verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
         self.bill_totals_verticalLayout.setObjectName(u"bill_totals_verticalLayout")
         self.bill_totals_verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -394,11 +410,19 @@ class Ui_MainWindow(object):
         self.current_month_label_pushButton.setText(QCoreApplication.translate("MainWindow", u"Maio", None))
         self.next_month_pushButton.setText(QCoreApplication.translate("MainWindow", u"Junho", None))
         self.header_invoices_label.setText(QCoreApplication.translate("MainWindow", u"Cobran\u00e7as M\u00eas", None))
-        self.header_bills_label.setText(QCoreApplication.translate("MainWindow", u"Cadastro de Contas", None))
+        self.header_bills_label.setText(QCoreApplication.translate("MainWindow", u"Contas", None))
 #if QT_CONFIG(tooltip)
         self.new_invoice_pushButton.setToolTip(QCoreApplication.translate("MainWindow", u"Inicia formul\u00e1rio para cadastro de nova cobran\u00e7a", None))
 #endif // QT_CONFIG(tooltip)
         self.new_invoice_pushButton.setText(QCoreApplication.translate("MainWindow", u"Nova Cobran\u00e7a", None))
+#if QT_CONFIG(tooltip)
+        self.edit_invoice_pushButton.setToolTip(QCoreApplication.translate("MainWindow", u"Inicia formul\u00e1rio para cadastro de nova cobran\u00e7a", None))
+#endif // QT_CONFIG(tooltip)
+        self.edit_invoice_pushButton.setText(QCoreApplication.translate("MainWindow", u"Editar Cobran\u00e7a", None))
+#if QT_CONFIG(tooltip)
+        self.details_invoice_pushButton.setToolTip(QCoreApplication.translate("MainWindow", u"Inicia formul\u00e1rio para cadastro de nova cobran\u00e7a", None))
+#endif // QT_CONFIG(tooltip)
+        self.details_invoice_pushButton.setText(QCoreApplication.translate("MainWindow", u"Visualizar Detalhes", None))
 #if QT_CONFIG(tooltip)
         self.new_bill_pushButton.setToolTip(QCoreApplication.translate("MainWindow", u"Inicia formul\u00e1rio para cadastro de nova cobran\u00e7a", None))
 #endif // QT_CONFIG(tooltip)

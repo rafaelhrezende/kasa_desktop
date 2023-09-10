@@ -45,4 +45,19 @@ def saveBill(title, description, category, payment_day, initial_value, is_active
     
     return crud.save_bill(bill)
 
+@service_handler
+def get_invoice_details(invoice_id):
+    return crud.get_invoice_details(invoice_id)
 
+@service_handler
+def save_invoice_detail(invoice_id, description, value, date, locale_description,  invoice_detail_id = None):
+    invoice_detail = models.InvoiceDetail(
+        id=invoice_detail_id,
+        invoice_id=invoice_id,
+        description=description,
+        value=value,
+        date=convert_text_to_date(date),
+        locale_description=locale_description
+    )
+    
+    return crud.save_invoice_detail(invoice_detail)

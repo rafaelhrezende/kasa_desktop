@@ -29,8 +29,7 @@ class Bill(Base):
         self.initial_value = new_data.initial_value
         self.payment_day = new_data.payment_day
         self.is_active = new_data.is_active
-        
-    
+           
 class Invoice(Base):
     __tablename__ = "invoices"
 
@@ -47,12 +46,13 @@ class Invoice(Base):
     bill_id = Column(Integer, ForeignKey("bills.id"))
 
     bill = relationship("Bill", back_populates="invoices")
+    invoice_details = relationship("InvoiceDetail", back_populates="invoice")
     
-    def get_field(self, field):
+    def get_field(self, field): 
         if field == 'bill' and self.bill != None:
             return self.bill.title
         return getattr(self, field)
-
+    
 class Process(Base):
     __tablename__ = "processes"
 
@@ -74,3 +74,20 @@ class Process(Base):
         self.finish_at = process.finish_at
         self.status = process.status
         self.observation = process.observation
+
+class InvoiceDetail(Base):
+    __tablename__ = "invoice_details"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    description = Column(String(300), nullable=False)
+    value = Column(Numeric(10,2))
+    date = Column(Date)
+    locale_description = Column(String(300), nullable=True)
+    invoice_id = Column(Integer, ForeignKey("invoices.id"))
+
+    invoice = relationship("Invoice", back_populates="invoice_details")
+
+    def get_field(self, field): 
+        return getattr(self, field)
+    
+    

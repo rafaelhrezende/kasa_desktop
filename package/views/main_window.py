@@ -7,9 +7,12 @@ import package.views.base_view as base_view
 from package.views.invoice import InvoiceForm
 from package.views.bill import BillForm
 from package.views.process_manager import ProcessManagerForm
+from package.views.invoice_details import InvoiceDetails
 import package.services.invoice_service as invoice_service
 from package.models.bill_model import BillModel
 import package.models.invoice_model as invoice_model
+
+import pdb
 
 class MonthEventOptions(Enum):
     NONE = 0
@@ -49,6 +52,7 @@ class MainWindow(QMainWindow):
         self.ui.bill_invoices_TableView.doubleClicked.connect(self.bill_invoices_TableView_doubleClicked)
         self.ui.mainTableView.doubleClicked.connect(self.mainTableView_doubleClicked)
         self.ui.action_process_manager.triggered.connect(self.action_process_manager_triggered) 
+        self.ui.details_invoice_pushButton.clicked.connect(self.details_invoice_pushButton_clicked)
         
     def show(self)->None:
         QMainWindow.show(self)
@@ -217,4 +221,12 @@ class MainWindow(QMainWindow):
     def action_process_manager_triggered(self):
         ProcessManagerForm().exec()
         
+    def details_invoice_pushButton_clicked(self):
+        selected_invoice = self.ui.bill_invoices_TableView.selectedIndexes()
+        selected_bill = self.ui.bills_listView.selectedIndexes()
+        if selected_invoice != [] and  selected_bill != []:
+            invoice = self.ui.bill_invoices_TableView.model().get_invoice(selected_invoice[0])
+            bill = self.ui.bills_listView.model().get_bill(selected_bill[0])
+            invoice_detail_form = InvoiceDetails(invoice, bill.title)
+            invoice_detail_form.exec()
         

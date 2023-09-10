@@ -4,8 +4,6 @@ from PySide6.QtWidgets import QStyledItemDelegate
 import package.services.bill_service as bill_service
 import package.services.invoice_service as invoice_service #TODO refactor to single file or search_service  
 
-import pdb # pdb.set_trace()
-
 INVOICE_TABLE_COLUMNS_INDEX = ["id", "bill", "reference_year", "reference_month", "value", "method","due_date", "completion_date", "pay_day" ]
 INVOICE_TABLE_COLUMNS_HEADER = ["Id.", "Conta", "Ref. Ano", "Ref. Mês", "Valor", "Método","Vencimento", "Realização", "Pagamento" ]
 INVOICE_DATE_COLUMNS = ["due_date", "completion_date", "pay_day"]
@@ -19,7 +17,7 @@ def list_invoices_from_bill_id(id:int):
         return result.contents
     else:
         return [] 
-
+    
 def list_invoices_from_searching(year, month):
     result = invoice_service.search_invoices_by_ref(year, month)
     if result.status:
@@ -75,11 +73,13 @@ class InvoiceModel(QAbstractTableModel):
             
     def get_invoice(self, index):
         return self.data_table[index.row()]
-    
+
+##TODO: Refactor to models_delegates
 class DateDelegate(QStyledItemDelegate):
     def displayText(self, value, locale):
         return value.toString() 
-    
+
+##TODO: Refactor to models_delegates    
 class CurrencyDelegate(QStyledItemDelegate):
     def displayText(self, value, locale):
         return f"R$ {value}" 

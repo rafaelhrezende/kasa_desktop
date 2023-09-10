@@ -49,15 +49,7 @@ class InvoiceForm(BaseFormDialog):
             QDialog.accept(self)
         else:
             print(f"Invoice - save_pushButton_clicked Error. {result.contents}")
-            self.show_error_message('Falha ao tentar salvar o registro', 'Verifique os campos indicados e tente novamente')
-            #TODO Remove validation - check status code on service and raise 
-          #  if result.json()['detail'].__class__ == str:
-          #      print("NOT IMPLEMENTED")
-          #  else:
-          #      errors_loc = [error['loc'][2] for error in result.json()['detail']]
-          #      self.validate_widget_invalid(errors_loc)
-            #TODO: Organizar mensagens e possibilitar tradução
-            
+            self.show_error_message('Falha ao tentar salvar o registro', 'Verifique os campos indicados e tente novamente')           
             
     def lineEdit_text_to_service_date_format(self, widget):
         try:
